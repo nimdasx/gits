@@ -1,7 +1,13 @@
+# catatan
+- petunjuk ini untuk instalasi di server/vps menggunakan os ubuntu versi 22 arsitektur x86/64
+- database postgresql menggunakan docker, install dahulu docker engine melalui link berikut https://docs.docker.com/engine/install/ubuntu/
+- versi odoo yang digunakan adakan 17.0
+
+## setup progresql di docker
+
 ```
 mkdir ~/odoo17 
-
-cd ~/odoo17  
+cd ~/odoo17
 mkdir postgres14  
 cd postgres14  
 vim docker-compose.yml  
@@ -25,6 +31,12 @@ services:
 cd ~/odoo17/postgres14
 docker compose up -d
 ```
+### buat user database odoo
+gunakan pgadmin atau tool postgres lainnya untuk membuat superuser database sbb :  
+user database : odongodong  
+password database : vstyfhfhjd  
+
+## setup odoo
 ```
 cd ~  
 sudo apt install xfonts-75dpi fontconfig libjpeg-turbo8 libxrender1 xfonts-base
@@ -54,6 +66,7 @@ deactivate
 cd ~/odoo17  
 vim odoo17.conf  
 ```
+catatan : sesuaikan /home/dev dengan home direktori anda
 ```
 [options]
 addons_path = /home/dev/odoo17/odoo/addons
@@ -69,6 +82,7 @@ limit_time_real = 100000
 cd ~/odoo17  
 vim odoo17.service  
 ```
+catatan : sesuaikan /home/dev dengan home direktori anda
 ```
 [Unit]
 Description=Odoo 17
