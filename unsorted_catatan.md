@@ -16,3 +16,8 @@ fswebcam --device /dev/video0 video0.jpg
 ```
 $pbkdf2-sha512$25000$4xwjZEwJgbCWsvaec875nw$eKhXFLBpAWHixi3QaE4/UHVfDLKEFLV5ZG4HFWP2FfctTAi6Jx4pahTQWgnVbqO3yXl9AQgdM8gHksNrbrh8Jg
 ```
+
+## nyalakan lampu philips wiz
+```
+/Users/xxx/Library/Python/3.8/bin/wizcon 192.168.xxx.xxx on
+```
