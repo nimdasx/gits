@@ -1,0 +1,16 @@
+kasus di oracle cloud dari ubuntu 20 ke 22 pas di dialog box ssh config freeze cpu 100% terus reboot paksa
+buka console connection > launch cloud shell connection
+
+control + d  : enter root password
+
+vim /etc/fstab
+disable efi partition
+
+force reboot
+
+dpkg --configure -a
+
+reboot
+
+selesai
+
