@@ -18,3 +18,12 @@ docker run --rm --volumes-from nginxpm-nginxpm-1 -v $(pwd):/backup ubuntu tar cv
 ```
 docker run -p 4173:4173 -it --rm -v "$PWD":/app -w /app node:lts-alpine npm run preview -- --host
 ```
+
+## tambahkan ini di tiap service docker compose ben ora kebak
+```
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+```
