@@ -1,0 +1,23 @@
+code server on the nux
+code server on ubuntu linux
+
+wget https://github.com/coder/code-server/releases/download/v4.95.1/code-server-4.95.1-linux-amd64.tar.gz
+
+code-server.service
+[Unit]
+Description=Code Server
+After=docker.service
+[Service]
+ExecStart=/home/dev/code-server/bin/code-server
+User=dev
+Group=dev
+StandardOutput=append:/home/dev/code-server/stdout.log
+StandardError=append:/home/dev/code-server/stderr.log
+[Install]
+WantedBy=default.target
+
+sudo ln -s ~/dev/code-server/code-server.service /etc/systemd/system  
+sudo systemctl enable code-server  
+sudo systemctl start code-server  
+
+ssl pakai nginx proxy manager
