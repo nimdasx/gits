@@ -1,0 +1,58 @@
+cara ambil data dari mqtt broker di zabbix
+
+alur :
+iot device > mqtt publisher > mqtt broker > mqtt subscriber (menggunakan zabbix agent2) > zabbix server
+
+jika format output data dari mqtt broker seperti ini :
+{
+  "temperature": {
+    "value": 31.399999618530273,
+    "unit": "celcius"
+  },
+  "humidity": {
+    "value": 29,
+    "unit": "%"
+  }
+}
+
+install zabbix agent2 di sembarang server, harus agent2, agent1 gak support mqtt
+/etc/zabbix/zabbix_agent2.conf
+# passive check, 
+# isi dengan alamat server zabbix yang boleh akses ke agent ini, kalau mau semua ya dikasih 0.0.0.0/0
+# ini sepertinya gak perlu, karena untuk mqtt harus pakai yang active check, bukan passive check
+Server=0.0.0.0/0
+# active check, 
+# isi dengan alamat server zabbix yang akan dikirimi data
+# sepertinya :10051 tidak perlu kalau sudah menggunakan default port
+ServerActive=192.168.0.xx:10051
+# isi dengan nama hostname, pastikan nama ini sama dengan yang diinput nantinya di zabbix web ui
+# jika beda, tidak akan bisa connect
+Hostname=192.168.0.aa
+
+masukkan host agent 2 ini ke zabbix web ui
+monitoring > hosts > create host
+
+hostname : 192.168.0.aa
+hostname harus sama dengan Hostname yang di zabbix_agent2
+
+Interfaces > add
+Type : agent
+IP address : 192.168.0.aa
+Port : 10050
+sepertinya tahap ini gak perlu
+
+buat items dari host agent 2 ini
+monitoring > hosts > pilih host 192.168.0.aa
+configuration > items > create item
+tab item
+name : suhu
+type : zabbix agent (active)
+key : mqtt.get["alamatmqttbroker","topikmqttbroker","usermqttbroker","passwordmqttbroker"]
+type of information : numeric (float)
+tab preprocessing
+name : jsonpath
+parameters : $.temperature.value
+
+buat dashboard
+
+jika ada problem, cek log zabbix server maupun zabbix agent2
