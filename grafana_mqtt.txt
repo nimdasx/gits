@@ -1,0 +1,53 @@
+cara ambil data dari mqtt broker di grafana
+
+alur :
+iot device > mqtt publisher > mqtt broker > mqtt subscriber (menggunakan telegraf) > influxdb > grafana
+
+untuk format output data dari mqtt broker yang seperti ini :
+{
+  "temperature": {
+    "value": 31.399999618530273,
+    "unit": "celcius"
+  },
+  "humidity": {
+    "value": 29,
+    "unit": "%"
+  }
+}
+
+install telegraf di sembarang server
+telegraf.conf
+# Input dari MQTT
+[[inputs.mqtt_consumer]]
+  servers = ["tcp://alamatmqttbroker:1883"]     
+  topics = [
+    "topikmqttbroker",
+    "test"                       
+  ]
+  username = "usermqttbroker"
+  password = "passwordmqttbroker"
+  data_format = "json"
+                               
+# Output ke InfluxDB
+[[outputs.influxdb_v2]]
+  urls = ["http://alamatinfluxdb:8086"]              
+  token = "tokeninfluxdb"  
+  organization = "docs"                               
+  bucket = "bucketinfluxdb"
+
+influxdb
+buat bucket bucketinfluxdb
+buat token tokeninfluxdb
+
+grafana
+connections > add new connection > influxdb
+name : influxdbx
+http
+url : http://alamatinfluxdb:8086/
+influxdb details
+database : buckety
+user : admin
+password : tokeninfluxdb
+
+dashboards > pilih dashbaord > add visualization
+data source : influxdbx
