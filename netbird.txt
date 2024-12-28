@@ -1,7 +1,10 @@
-netbird problem
+netbird problem : 
+jika ada docker container yang jadi satu dengan netbird, maka port container tidak bisa diakses dari routing netbird
 https://github.com/netbirdio/netbird/issues/2701
 
-I'm currently using NetBird version 0.34.1, and this issue still persists. However, after downgrading to version 0.29.4, the problem is resolved. I am still unsure about the solution to fix this issue without downgrading to version 0.29.4
+I'm currently using NetBird version 0.34.1, and this issue still persists. 
+However, after downgrading to version 0.29.4, the problem is resolved. 
+I am still unsure about the solution to fix this issue without downgrading to version 0.29.4
 
 sementara hold di versi 0.29.4
 tmux new-session -d -s netbird-setup "sudo apt install -y --allow-downgrades --allow-change-held-packages netbird=0.29.4 && sudo apt-mark hold netbird && exit"

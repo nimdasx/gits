@@ -25,7 +25,7 @@ update res_users set password='$pbkdf2-sha512$25000$4xwjZEwJgbCWsvaec875nw$eKhXF
 
 ## buat update.sh
 ```
-echo -e '#!/bin/bash\ntmux new-session -d -s aptupdatemendem "sudo apt update && sudo apt upgrade -y && exit"' > update.sh && chmod +x update.sh
+echo -e '#!/bin/bash\ntmux new-session -d -s aptupdatemendem "sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && exit"' > update.sh && chmod +x update.sh
 ```
 
 ## reinstall
