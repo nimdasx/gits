@@ -1,0 +1,12 @@
+graylog
+
+sudo nano /etc/sysctl.conf
+vm.max_map_count=262144
+sudo sysctl -p
+sysctl vm.max_map_count
+
+https://github.com/Graylog2/docker-compose/tree/main/open-core
+
+password di docker log
+
+http://0.0.0.0:9000
