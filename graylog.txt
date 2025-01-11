@@ -9,4 +9,12 @@ https://github.com/Graylog2/docker-compose/tree/main/open-core
 
 password di docker log
 
-http://0.0.0.0:9000
+http://1.1.1.1:9000
+
+graylog > system inputs > select input > gelf udp
+
+logging di docker-compose.yml
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://1.1.1.1:12201"
