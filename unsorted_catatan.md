@@ -33,3 +33,9 @@ echo -e '#!/bin/bash\ntmux new-session -d -s aptupdatemendem "sudo apt update &&
 sudo apt purge somepackage
 sudo apt install somepackage
 ```
+
+## extract preserve permission
+```
+gunzip file.tar.gz
+sudo tar --same-owner -xvf file.tar
+```

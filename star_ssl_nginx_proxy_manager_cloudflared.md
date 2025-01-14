@@ -10,7 +10,9 @@ A   *.odoo  ip address
 
 website > overview > get your api token > create token > create custom token > get started
 permissions
-zone    dns edit
+zone        dns             edit
+zone resources
+include     specific zone   <pilih domain>
 
 nginx proxy manager
 
