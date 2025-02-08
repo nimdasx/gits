@@ -1,5 +1,30 @@
 # docker
 
+## lokal builder for amd64, remote builder for arm64
+https://dev.to/aboozar/build-docker-multi-platform-image-using-buildx-remote-builder-node-5631
+```
+# local builder for amd64
+docker buildx create \
+--name gundambuilder \
+--node rx78gexnode \
+--platform linux/amd64
+
+# remote builder for arm64
+docker buildx create \
+--name gundambuilder \
+--append \
+--node kyriosnode \
+--platform linux/arm64 \
+ssh://xxx@xxx.xxx.xxx.xxx
+
+# use and boot
+docker buildx use gundambuilder
+docker buildx inspect --bootstrap
+
+# test build and push
+docker buildx build --platform linux/amd64,linux/arm64 --tag nimdasx/apache-php7-phalcon4 --push .
+```
+
 ## install docker on nux
 ```
 curl -fsSL https://get.docker.com -o get-docker.sh
