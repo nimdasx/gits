@@ -1,0 +1,1 @@
+for I in $(mysql -e 'show databases' -s --skip-column-names); do mysqldump -R $I | gzip > "$I.sql.gz"; done

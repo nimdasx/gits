@@ -1,0 +1,1 @@
+rsync -r --size-only -delete --progress ~/Music/ /Volumes/FATIH/

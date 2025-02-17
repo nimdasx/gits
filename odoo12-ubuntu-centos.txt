@@ -1,0 +1,41 @@
+--------- ubuntu 18 bionic -----------------
+
+libxml2-dev libldap2-dev libsasl2-dev libssl-dev libxslt1-dev
+https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+
+./odoo-bin -c ../odoo12.cfg
+./odoo-bin -r aa -w bb --db_host=192.168.0.xx
+
+------------ centos 7 pake virtualenv --------------
+
+https://linuxize.com/post/install-odoo-12-on-centos-7/
+
+yum install epel-release centos-release-scl
+yum install rh-python36 git gcc wget nodejs-less libxslt-devel bzip2-devel openldap-devel libjpeg-devel freetype-devel
+yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
+yum install postgresql10-server postgresql10-devel
+/usr/pgsql-10/bin/postgresql-10-setup initdb
+systemctl enable postgresql-10
+systemctl start postgresql-10
+
+https://github.com/wkhtmltopdf/wkhtmltopdf/releases/tag/0.12.5
+https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+yum install wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+
+$ clone odoo dari github
+buat user linux untuk odoo
+buat user admin postgres untuk odoo (samakan dengan user linux)
+
+$ scl enable rh-python36 bash
+$ cd /opt/odoo
+$ python3 -m venv gundam
+$ source gundam/bin/activate
+(gundam)$ pip3 install -r requirements.txt
+(gundam)$ deactivate
+
+/usr/bin/scl enable rh-python36 -- /opt/odoo/gundam/bin/python3 /opt/odoo/odoo-bin
+/usr/bin/scl enable rh-python36 -- /opt/odoo/gundam/bin/python3 /opt/odoo/odoo-bin -c /opt/odoo/telo.cfg
+
+ben iso ngeremote postgresql
+firewall-cmd --add-port=5432/tcp --permanent
+firewall-cmd --reload

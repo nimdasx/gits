@@ -1,0 +1,2 @@
+Let’s Connect You To A Network -> “Shift” and “F10”
+taskkill /F /IM oobenetworkconnectionflow.exe

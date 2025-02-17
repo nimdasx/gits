@@ -1,0 +1,5 @@
+problem
+Error: QWeb2 - template['Product']: Runtime Error: TypeError: dict.product.get_display_price is not a function
+
+solusi
+install pos_cache
