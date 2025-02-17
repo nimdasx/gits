@@ -1,0 +1,28 @@
+langkah-langkah push docker image ke github
+
+create personal access token di github setting developer
+
+login ke github container registry :
+echo ghp_XXX | docker login ghcr.io -u nimdasx --password-stdin
+
+tag docker image :
+docker tag nimdasx/sf-phalcon-3 ghcr.io/nimdasx/sf-phalcon-3
+
+push docker image :
+docker push ghcr.io/nimdasx/sf-phalcon-3
+
+cek hasilnya di :
+https://github.com/nimdasx?tab=packages
+jangan lupa di set public biar orang lain bisa pull image-mu yes
+
+kalau mau ngepull :
+docker pull ghcr.io/nimdasx/sf-phalcon-3:latest
+
+catatan :
+ganti ghp_XXXX dengan personal access tokenmu
+ganti nimdasx dengan username githubmu
+ganti sf-phalcon-3 dengan nama image dockermu
+
+sumber :
+https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+https://linuxtut.com/en/1caaa03bc5d78cc26fc1/

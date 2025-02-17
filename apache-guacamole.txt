@@ -1,0 +1,32 @@
+init db
+docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --mysql > initdb.sql
+import initdb.sql ke server mysql terserah dimana
+
+vim /opt/guacamole/docker-compose.yml
+--- isi file-nya docker-compose.yml ---
+version: "3"
+services:
+  guacd:
+    image: guacamole/guacd:latest
+    restart: unless-stopped
+  guac:
+    image: guacamole/guacamole:latest
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+    environment:
+      GUACD_HOSTNAME: guacd
+      GUACD_PORT: 4822
+      MYSQL_HOSTNAME: xxx
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: xxx
+      MYSQL_USER: xxx
+      MYSQL_PASSWORD: xxx
+--- end of isi filenya docker-compose.yml ---
+
+docker-compose up
+
+http://yyy.com.gundul.pacul.co.id:8081/guacamole
+
+
+ 

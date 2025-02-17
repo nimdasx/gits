@@ -1,0 +1,5 @@
+To clear the Apache errors, type the following and press Enter
+cat /dev/null> /usr/local/apache/logs/error_log
+
+To delete PHP error_log files, type the following and press Enter
+find /home -type f -name error_log -delete

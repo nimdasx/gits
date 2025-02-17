@@ -1,0 +1,11 @@
+1. resize partisi via booting cd gparted
+
+2. resize volume manager
+a. df -h
+b. vgdisplay
+c. lvdisplay
+d. lvextend -l +100%FREE /dev/ubuntu-vg/lv-0
+
+3. Resize Root File System Partition
+a. df -h
+b. resize2fs /dev/mapper/ubuntu--vg-lv--0

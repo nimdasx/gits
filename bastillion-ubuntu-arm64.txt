@@ -1,0 +1,21 @@
+cd /opt
+
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-aarch64_bin.tar.gz
+tar zxvf jdk....
+
+wget https://github.com/bastillion-io/Bastillion/releases/download/v3.13.00/bastillion-jetty-v3.13_00.tar.gz
+tar zxvf bast....
+
+vim /etc/profile.d/java.sh
+export JAVA_HOME=/opt/jdk-17.0.1
+export PATH=$PATH:$JAVA_HOME/bin
+
+cp /opt/Bastillion-jetty/jetty/bin/jetty.sh /etc/init.d/bastillion
+echo JETTY_HOME=/opt/Bastillion-jetty/jetty > /etc/default/bastillion
+
+reboot
+
+/etc/init.d/bastillion start
+
+wingi terlanjur di sudo, start-e kudu nggo root, nek user biasa dadadi error database readonly
+

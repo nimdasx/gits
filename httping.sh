@@ -1,0 +1,1 @@
+httping https://xxx.yyy.go.id/ -Y --threshold-red 500 --ts

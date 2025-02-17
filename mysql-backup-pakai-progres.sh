@@ -1,0 +1,1 @@
+mysqldump -h xxx.xxx.xxx.xxx -u xxx -pxxx -R xxx | pv -W -s 100m | gzip > xxx-$(date +"%Y-%m-%d_%H-%M-%S").sql.gz
