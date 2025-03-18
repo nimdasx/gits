@@ -16,8 +16,11 @@ StandardError=append:/home/dev/code-server/stderr.log
 [Install]
 WantedBy=default.target
 
-sudo ln -s ~/dev/code-server/code-server.service /etc/systemd/system  
+sudo ln -s ~/code-server.service /etc/systemd/system  
 sudo systemctl enable code-server  
 sudo systemctl start code-server  
+
+vim .config/code-server/config.yaml
+bind-addr: 0.0.0.0:8080
 
 ssl pakai nginx proxy manager
