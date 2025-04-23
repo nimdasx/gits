@@ -8,3 +8,6 @@ I am still unsure about the solution to fix this issue without downgrading to ve
 
 sementara hold di versi 0.29.4
 tmux new-session -d -s netbird-setup "sudo apt install -y --allow-downgrades --allow-change-held-packages netbird=0.29.4 && sudo apt-mark hold netbird && exit"
+
+23 april 2025
+versi 0.41.3 sudah resolved
