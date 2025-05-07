@@ -1,0 +1,37 @@
+#di server db odoo
+
+#dump database
+pg_dump -U postgres -F c -f xxx.dump xxx
+
+
+
+#siapkan vm/ct kosongan
+
+#update apt
+apt update
+apt upgrade
+
+#install postgesql
+apt install postgresql
+
+#kopi file xxx.dump ke sini
+
+#buat role dan db root
+sudo -u postgres psql
+CREATE ROLE root WITH LOGIN SUPERUSER PASSWORD 'passwordmu';
+CREATE DATABASE root;
+
+#buat database kosongan xxx
+createdb xxx
+
+#restore xxx.dump ke xxx
+pg_restore -d xxx xxx.dump
+
+#jalankan upgrade script
+python3 <(curl -s https://upgrade.odoo.com/upgrade) test -d xxx -t 18.0
+
+setelah selesai akan muncul warning ini
+WARNING: The original filestore of 'xxx' has not been found in /root/.local/share/Odoo/filestore. The filestore of the upgrade database should be restored manually.
+
+
+tobe continue
