@@ -1,37 +1,51 @@
-#di server db odoo
+#siapkan vm/ct kosongan misal di toki
 
-#dump database
-pg_dump -U postgres -F c -f xxx.dump xxx
-
-
-
-#siapkan vm/ct kosongan
-
-#update apt
 apt update
 apt upgrade
-
-#install postgesql
 apt install postgresql
-
-#kopi file xxx.dump ke sini
 
 #buat role dan db root
 sudo -u postgres psql
-CREATE ROLE root WITH LOGIN SUPERUSER PASSWORD 'passwordmu';
+CREATE ROLE root WITH LOGIN SUPERUSER PASSWORD 'sapi';
 CREATE DATABASE root;
 
-#buat database kosongan xxx
-createdb xxx
+#-----------------------------------------------------------
 
-#restore xxx.dump ke xxx
-pg_restore -d xxx xxx.dump
+#begin : di server production versi 17
 
-#jalankan upgrade script
-python3 <(curl -s https://upgrade.odoo.com/upgrade) test -d xxx -t 18.0
+#backup dari versi 17
+backup dari http://192.168.0.17:8016/web/database/manager
 
-setelah selesai akan muncul warning ini
-WARNING: The original filestore of 'xxx' has not been found in /root/.local/share/Odoo/filestore. The filestore of the upgrade database should be restored manually.
+#-----------------------------------------------------------
 
+#kopi ke toki
 
-tobe continue
+#-----------------------------------------------------------
+
+#begin : di vm/ct toki
+
+unzip gundul_2025-05-09_07-31-56.zip
+
+createdb gundul
+
+#restore
+psql -d gundul -f dump.sql 
+
+#test upgrade
+#kalo production, ganti test jadi production
+python3 <(curl -s https://upgrade.odoo.com/upgrade) test -d gundul -t 18.0
+
+rm dump.sql
+
+pg_dump -d gundul_test_18.0_2025_05_09_07_42 > dump.sql
+
+zip -r gundul18test.zip dump.sql filestore
+
+#-----------------------------------------------------------
+
+#kopi ke local
+
+#-----------------------------------------------------------
+
+#upload ke versi 18
+http://192.168.0.18:10022/web/database/manager
