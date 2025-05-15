@@ -1,1 +1,1 @@
-tail -f /usr/local/apache/logs/error_log  | grep devatsoft
+tail -f /usr/local/apache/logs/error_log  | grep devxyz

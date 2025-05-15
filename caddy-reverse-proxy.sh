@@ -8,12 +8,12 @@ curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo 
 sudo apt update
 sudo apt install caddy
 
-#buat IN A stream.radiounisia.com ke ip 202.162.36.222
+#buat IN A stream.radiounisia.com ke ip x.x.x.x
 
 #buka config caddy di /etc/caddy/Caddyfile :
 
 stream.radiounisia.com {
-  reverse_proxy 202.162.36.222:8000
+  reverse_proxy x.x.x.x:8000
 }
 
 #buang/comment semua string setting yang lain, hanya tinggalkan line diatas doang
