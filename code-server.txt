@@ -12,7 +12,7 @@ git config --global user.email "usere@servere"
 
 wget https://github.com/coder/code-server/releases/download/v4.100.1/code-server-4.100.1-linux-amd64.tar.gz
 
-code-server.service
+code-server-service/code-server.service
 [Unit]
 Description=Code Server
 After=docker.service
@@ -25,9 +25,13 @@ StandardError=append:/home/dev/code-server/stderr.log
 [Install]
 WantedBy=default.target
 
-sudo ln -s ~/code-server.service /etc/systemd/system  
-sudo systemctl enable code-server  
-sudo systemctl start code-server  
+code-server-service/install-service.sh
+sudo ln -s ~/code-server-service/code-server.service /etc/systemd/system
+sudo systemctl enable code-server
+sudo systemctl start code-server
+sudo systemctl status code-server
+
+sh install-service.sh
 
 vim .config/code-server/config.yaml
 bind-addr: 0.0.0.0:8080
