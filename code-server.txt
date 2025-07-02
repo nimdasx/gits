@@ -3,14 +3,14 @@ code server on ubuntu linux
 
 #urutan
 inject sudo
-timezone
+timezone sudo timedatectl set-timezone Asia/Jakarta
 docker engine
 code server
 ssh-keygen -t ed25519
 git config --global user.name "user e"
 git config --global user.email "usere@servere"
 
-wget https://github.com/coder/code-server/releases/download/v4.100.1/code-server-4.100.1-linux-amd64.tar.gz
+wget https://github.com/coder/code-server/releases/download/v4.101.2/code-server-4.101.2-linux-amd64.tar.gz
 
 code-server-service/code-server.service
 [Unit]
@@ -33,7 +33,7 @@ sudo systemctl status code-server
 
 sh install-service.sh
 
-vim .config/code-server/config.yaml
+vim ~/.config/code-server/config.yaml
 bind-addr: 0.0.0.0:8080
 
 ssl pakai nginx proxy manager
