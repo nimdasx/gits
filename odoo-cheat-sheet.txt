@@ -1,0 +1,16 @@
+#odoo cheat mbuh
+
+#update modul tanpi kenapa model gak keupdate ya, kudu mattin odoo terus nyalain lagi
+docker compose run --rm <nama service> -u <nama_modul> -d <nama_database> --stop-after-init
+
+#atau
+docker compose exec <nama service> odoo -u <nama_modul> -d <nama_database> --stop-after-init
+
+#kalao model gak terupdate, direstart
+docker compose restart <nama service>
+
+#lihat report tanpa download pakai nama ir.action pdf/html
+<url odoo>/report/pdf/account.account_invoices/<id record>
+
+#pakai nama report pdf/html
+<url odoo>/report/pdf/account.report_invoice/<id record>
