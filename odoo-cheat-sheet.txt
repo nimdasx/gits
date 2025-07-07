@@ -9,6 +9,9 @@ docker compose exec <nama service> odoo -u <nama_modul> -d <nama_database> --sto
 #kalao model gak terupdate, direstart
 docker compose restart <nama service>
 
+#update modul, restart, lihat log
+docker compose exec <nama service> odoo -u <nama modul> -d <nama db> --stop-after-init && docker compose restart <nama service> && docker compose logs -f <nama service>
+
 #lihat report tanpa download pakai nama ir.action pdf/html
 <url odoo>/report/pdf/account.account_invoices/<id record>
 
