@@ -17,3 +17,6 @@ docker compose exec <nama service> odoo -u <nama modul> -d <nama db> --stop-afte
 
 #pakai nama report pdf/html
 <url odoo>/report/pdf/account.report_invoice/<id record>
+
+#jika error saat uninstall modul karena source code udah gak sinkron
+DELETE FROM ir_model_data WHERE model = '<key error yang muncul di layar>';
