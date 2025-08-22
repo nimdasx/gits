@@ -20,3 +20,8 @@ docker compose exec <nama service> odoo -u <nama modul> -d <nama db> --stop-afte
 
 #jika error saat uninstall modul karena source code udah gak sinkron
 DELETE FROM ir_model_data WHERE model = '<key error yang muncul di layar>';
+
+#disable audit trail di odoo 18 enterprise
+UPDATE res_company
+SET check_account_audit_trail = FALSE
+WHERE check_account_audit_trail IS TRUE;
