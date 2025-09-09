@@ -1,0 +1,17 @@
+#!/bin/bash
+# sudo chmod +x /etc/update-motd.d/99-custom 
+CYAN="\e[36m"
+YELLOW="\e[33m"
+GREEN="\e[32m"
+RESET="\e[0m"
+
+echo -e "${CYAN}=== Docker Compose Projects ===${RESET}"
+
+if ! command -v docker &>/dev/null; then
+    echo -e "${RED}Docker not installed${RESET}"
+    exit 0
+fi
+
+docker compose ls --format json 2>/dev/null | jq -r '.[] | [.Name, .Status, .ConfigFiles] | @tsv' | while IFS=$'\t' read -r name status config; do
+    echo -e "${CYAN}${name}${RESET}\t${YELLOW}${status}${RESET}\t${GREEN}${config}${RESET}"
+done | column -t
