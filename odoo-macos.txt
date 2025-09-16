@@ -1,0 +1,29 @@
+#install
+brew install postgresql
+python3 -m venv venv
+source venv/bin/activate
+pip install -r odoo/requirements.txt
+
+#dari dalam venv
+python odoo/odoo-bin -c odoo.conf
+
+#dari luar venv
+venv/bin/python odoo/odoo-bin -c odoo.conf
+
+#contoh iso odoo.conf untuk development
+[options]
+db_host = localhost
+db_port = 2320
+db_user = odoo18
+db_password = q
+addons_path = odoo/addons,addons/enterprise,addons/design-themes
+limit_time_real = 900
+limit_time_cpu = 900
+limit_memory_soft = 0
+limit_memory_hard = 0
+workers = 0
+max_cron_threads = 0
+dev = all
+log_level = debug
+reload = True
+data_dir = data
