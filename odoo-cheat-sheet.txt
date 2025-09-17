@@ -1,5 +1,13 @@
 #odoo cheat mbuh
 
+#odoo docker release tiap 2 minggu sekali, cek https://github.com/odoo/docker/commits/master/
+sehingga kalau update enterprise dari github dan core-nya pakai docker, bisa jadi gagal update karene yang diinherit belum ada di core
+contoh 12/9/2025
+ada problem di kpi.provider, 
+di enterprise ada enterprise/documents/model/kpi_provider.py yang inherit ke kpi.provider 
+tapi  di core odoo 18 yang docker tidak ada, jadi inherit fail
+kalau di core odoo 18 yang github ada, jadi inherit berhasil, ada di odoo/addons/base_setup/models/kpi_provider.py
+
 #update modul tanpi kenapa model gak keupdate ya, kudu mattin odoo terus nyalain lagi
 docker compose run --rm <nama service> -u <nama_modul> -d <nama_database> --stop-after-init
 
