@@ -1,0 +1,4 @@
+#Resize LV (perbesar logical volume)
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+#Resize filesystem (supaya OS sadar ukuran baru)
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
