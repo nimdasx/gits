@@ -1,0 +1,2 @@
+#export PATH="/usr/local/bin:$PATH"
+b2 sync /Users/xxx/Downloads/backup b2://backblazexxx01/backup --delete
