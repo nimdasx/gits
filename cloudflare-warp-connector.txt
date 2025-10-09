@@ -1,0 +1,35 @@
+cloudflare warp connector
+
+https://one.dash.cloudflare.com/
+
+settings > warp client > device settings > default > duplicate
+
+selector    : user email
+operator    : is
+value       : warp_connector@<namaorganisasimu>.cloudflareaccess.com
+
+split tunnels
+exclude ips and domains
+manage
+selector    : ip address
+value       : subnet yang sejajar sama warp connectormu, misal 192.168.0.0/24, biar network itu gak masuk ke cloudflare
+
+networks > tunnels > create tunnel > select warp connecetor > next step
+paste script ke host yang mau kamu install warp conenctor
+
+aktifkan ip forward
+sudo vim /etc/sysctl.d/99-sysctl.conf
+net.ipv4.ip_forward=1
+
+aktifkan nat
+sudo vim /etc/rc.local
+#!/bin/bash
+# NAT untuk WARP Connector
+iptables -t nat -A POSTROUTING -o CloudflareWARP -j MASQUERADE
+
+sudo chmod +x /etc/rc.local
+sudo systemctl enable rc-local
+
+reboot
+
+dari node lain yang mau pakai ini, buat route via ini di node2 tersebut
