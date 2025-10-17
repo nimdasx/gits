@@ -1,0 +1,39 @@
+monitoring nginx dan php-fpm pakai netdata
+
+di docker nginx
+
+- ./docker-conf/php-fpm-pool-nimdasx.conf:/opt/docker/etc/php/fpm/pool.d/php-fpm-pool-nimdasx.conf
+[www]
+pm.status_path = /php_status
+ping.path = /php_ping
+
+- ./docker-conf/vhost.conf:/opt/docker/etc/nginx/vhost.conf
+server {
+    location /nginx_status {
+        stub_status;
+        allow 127.0.0.1;
+        allow 192.168.246.0/24;
+        allow ::1;
+        deny all;
+    }
+
+    location ~ ^/(php_status|php_ping)$ {
+        fastcgi_pass php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+
+di netdata
+
+docker compose exec -it netdata bash
+
+editor /etc/netdata/go.d/nginx.conf
+jobs:
+  - name: sirsnginx1280
+    url: http://192.168.x.x:1280/nginx_status
+editor /etc/netdata/go.d/phpfpm.conf
+
+jobs:
+  - name: sirsphpfpm1280
+    url: http://192.168.x.x:1280/php_status?full&json
