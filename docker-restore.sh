@@ -2,6 +2,17 @@
 
 # Script to restore a docker-compose project from a backup archive.
 
+# --- Prerequisite Check ---
+if ! command -v pv &> /dev/null; then
+    echo "Error: 'pv' (Pipe Viewer) is not installed. It is required for progress bars."
+    echo "Please install it (e.g., 'sudo apt-get install pv' or 'sudo yum install pv') and try again."
+    exit 1
+fi
+if ! command -v docker &> /dev/null; then
+    echo "Error: 'docker' is not installed. It is required to restore volumes."
+    exit 1
+fi
+
 # --- Validation ---
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <path_to_archive.tar.gz> <target_restore_directory>"
@@ -52,8 +63,9 @@ EXTRACT_DIR=$(mktemp -d)
 trap 'echo "Cleaning up temporary files..."; sudo rm -rf "$EXTRACT_DIR"' EXIT
 
 echo "Extracting archive to a temporary location..."
-sudo tar -xzf "$ARCHIVE_FILE" -C "$EXTRACT_DIR"
-if [ $? -ne 0 ]; then
+ARCHIVE_SIZE=$(stat -c%s "$ARCHIVE_FILE")
+pv "$ARCHIVE_FILE" | sudo tar -xz -C "$EXTRACT_DIR"
+if [ ${PIPESTATUS[1]} -ne 0 ]; then
     echo "Error: Failed to extract archive."
     exit 1
 fi
@@ -72,7 +84,8 @@ if [ -d "$VOLUMES_BACKUP_DIR" ]; then
     echo "Restoring Docker volumes..."
     
     # Check if there are any volume archives to restore
-    if [ -z "$(ls -A "$VOLUMES_BACKUP_DIR"/*.tar.gz 2>/dev/null)" ]; then
+    VOLUME_ARCHIVES=("$VOLUMES_BACKUP_DIR"/*.tar.gz)
+    if [ ! -f "${VOLUME_ARCHIVES[0]}" ]; then
         echo "No volume archives (.tar.gz) found in the backup."
     else
         echo "Letting docker-compose create empty volumes with correct labels..."
@@ -85,7 +98,10 @@ if [ -d "$VOLUMES_BACKUP_DIR" ]; then
         fi
         cd - > /dev/null
 
-        for volume_archive in "$VOLUMES_BACKUP_DIR"/*.tar.gz; do
+        TOTAL_VOLUMES=${#VOLUME_ARCHIVES[@]}
+        CURRENT_VOLUME=0
+        for volume_archive in "${VOLUME_ARCHIVES[@]}"; do
+            ((CURRENT_VOLUME++))
             volume_name=$(basename "$volume_archive" .tar.gz)
             
             # Verify that docker-compose actually created the volume
@@ -94,15 +110,15 @@ if [ -d "$VOLUMES_BACKUP_DIR" ]; then
                 continue
             fi
 
-            echo "Populating volume '$volume_name' using a busybox container..."
-            # We need the absolute path to the backup dir for the docker volume mount
-            ABS_VOLUMES_BACKUP_DIR=$(realpath "$VOLUMES_BACKUP_DIR")
-            docker run --rm \
+            echo "Populating volume '$volume_name' ($CURRENT_VOLUME of $TOTAL_VOLUMES)..."
+            ARCHIVE_SIZE=$(stat -c%s "$volume_archive")
+            
+            # Pipe the archive content through pv into a docker container that extracts it
+            pv "$volume_archive" | docker run --rm -i \
                 -v "${volume_name}:/volume_data" \
-                -v "${ABS_VOLUMES_BACKUP_DIR}:/backup:ro" \
-                busybox sh -c "tar -xzf /backup/$(basename "$volume_archive") -C /volume_data"
+                busybox tar -xz -C /volume_data
 
-            if [ $? -ne 0 ]; then
+            if [ ${PIPESTATUS[1]} -ne 0 ]; then
                 echo "Warning: Failed to restore data to volume '$volume_name'."
             fi
         done

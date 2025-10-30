@@ -2,6 +2,20 @@
 
 # Script to backup a docker-compose project directory and its volumes.
 
+# --- Prerequisite Check ---
+if ! command -v rsync &> /dev/null; then
+    echo "Error: 'rsync' is not installed. It is required for copying files with progress."
+    echo "Please install it (e.g., 'sudo apt-get install rsync' or 'sudo yum install rsync') and try again."
+    exit 1
+fi
+
+if ! command -v pv &> /dev/null; then
+    echo "Error: 'pv' (Pipe Viewer) is not installed. It is required for progress bars."
+    echo "Please install it (e.g., 'sudo apt-get install pv' or 'sudo yum install pv') and try again."
+    exit 1
+fi
+
+
 # --- Validation ---
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <path_to_docker_compose_folder>"
@@ -37,7 +51,8 @@ PROJECT_STAGING_DIR="$STAGING_DIR/$PROJECT_NAME"
 mkdir -p "$PROJECT_STAGING_DIR"
 
 echo "Copying project files to staging area..."
-sudo cp -aR "$SOURCE_DIR/." "$PROJECT_STAGING_DIR/"
+sudo rsync -a --info=progress2 "$SOURCE_DIR/" "$PROJECT_STAGING_DIR/"
+
 
 # --- Volume Backup ---
 echo "Finding and backing up associated Docker volumes..."
@@ -61,14 +76,30 @@ else
     VOLUMES_BACKUP_DIR="$PROJECT_STAGING_DIR/volumes_backup"
     mkdir -p "$VOLUMES_BACKUP_DIR"
     echo "Found volumes: $VOLUMES"
-    for volume in $VOLUMES; do
-        echo "Backing up volume '$volume' using a busybox container..."
-        docker run --rm \
-            -v "${volume}:/volume_data:ro" \
-            -v "${VOLUMES_BACKUP_DIR}:/backup" \
-            busybox tar -czf "/backup/${volume}.tar.gz" -C /volume_data .
 
-        if [ $? -ne 0 ]; then
+    # Convert space-separated string to array to count them
+    read -ra VOLUME_ARRAY <<< "$VOLUMES"
+    TOTAL_VOLUMES=${#VOLUME_ARRAY[@]}
+    CURRENT_VOLUME=0
+
+    for volume in "${VOLUME_ARRAY[@]}"; do
+        ((CURRENT_VOLUME++))
+        echo "Backing up volume '$volume' ($CURRENT_VOLUME of $TOTAL_VOLUMES)..."
+
+        # Get the total size of the volume for pv
+        VOLUME_SIZE_BYTES=$(docker run --rm -v "${volume}:/volume_data:ro" busybox du -sb /volume_data | awk '{print $1}')
+        if [ -z "$VOLUME_SIZE_BYTES" ] || [ "$VOLUME_SIZE_BYTES" -eq 0 ]; then
+             echo "Volume is empty or size could not be determined. Creating empty archive."
+             # Create an empty tarball
+             tar -czf "${VOLUMES_BACKUP_DIR}/${volume}.tar.gz" -T /dev/null
+        else
+            # Pipe tar output through pv to show progress
+            docker run --rm \
+                -v "${volume}:/volume_data:ro" \
+                busybox tar -c -C /volume_data . | pv -s "$VOLUME_SIZE_BYTES" | gzip > "${VOLUMES_BACKUP_DIR}/${volume}.tar.gz"
+        fi
+
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
             echo "Warning: Failed to back up volume '$volume'. Skipping."
         fi
     done
@@ -85,7 +116,10 @@ BACKUP_DEST_DIR="./docker-backup"
 mkdir -p "$BACKUP_DEST_DIR"
 
 echo "Creating archive: ${BACKUP_DEST_DIR}/${BACKUP_FILENAME}"
-sudo tar -czf "${BACKUP_DEST_DIR}/${BACKUP_FILENAME}" -C "$STAGING_DIR" "$PROJECT_NAME"
+# Get total size of the staging directory for pv
+TOTAL_SIZE=$(sudo du -sb "$STAGING_DIR/$PROJECT_NAME" | awk '{print $1}')
+sudo tar -cz -C "$STAGING_DIR" "$PROJECT_NAME" | pv -s "$TOTAL_SIZE" > "${BACKUP_DEST_DIR}/${BACKUP_FILENAME}"
+
 
 if [ $? -eq 0 ]; then
     echo "----------------------------------------"
