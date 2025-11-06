@@ -7,17 +7,23 @@ sysctl vm.max_map_count
 
 https://github.com/Graylog2/docker-compose/tree/main/open-core
 
+di docker-compose.yml
 tambahkan timezone di service graylog
       TZ: "Asia/Jakarta"
       GRAYLOG_ROOT_TIMEZONE: "Asia/Jakarta"
+open port 9000 dan 12201
+
+di firewall
+allow port 12201 hanya dari ip yang mau ngirimin log 
 
 password di docker log
 
 http://1.1.1.1:9000
 
 graylog > system inputs > select input > gelf udp
+add stream
 
-logging di docker-compose.yml container lain
+logging di docker-compose.yml container lain yang mau ngirimin log
     logging:
       driver: gelf
       options:
