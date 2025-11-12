@@ -1,6 +1,27 @@
 dokploy
-- problem traefik error komunikasi sama swarm
+
 - antar kontainer dalam satu docker compose tidak bisa ngobrol
+
+kenapa harus pakai ini
+services:
+  someservice:
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network: 
+    external: true
+
+- problem traefik error komunikasi sama swarm
 
 ada bug kemarin 11 nov 2025
 https://github.com/traefik/traefik/issues/12253#issuecomment-3515733047
+
+systemctl edit docker.service
+
+[Service]
+Environment=DOCKER_MIN_API_VERSION=1.24
+
+sudo systemctl restart docker
+
+di error log gak ada apa2, tapi ya tetep gak mau
