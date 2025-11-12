@@ -1,0 +1,3 @@
+dokploy
+- problem traefik error komunikasi sama swarm
+- antar kontainer dalam satu docker compose tidak bisa ngobrol
