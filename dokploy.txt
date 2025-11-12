@@ -1,3 +1,6 @@
 dokploy
 - problem traefik error komunikasi sama swarm
 - antar kontainer dalam satu docker compose tidak bisa ngobrol
+
+ada bug kemarin 11 nov 2025
+https://github.com/traefik/traefik/issues/12253#issuecomment-3515733047
