@@ -1,0 +1,43 @@
+harbor container registry pakai proxy
+
+cd ~/dockerizer
+wget https://github.com/goharbor/harbor/releases/download/v2.14.0/harbor-online-installer-v2.14.0.tgz
+tar zxvf harbor-online-installer-v2.14.0.tgz
+rm harbor-online-installer-v2.14.0.tgz
+cd harbor
+cp harbor.yml.tmpl harbor.yml
+
+vim harbor.yml
+hostname: domainmuterserahmu.com
+http:
+  port: 8081
+#https:
+   #port: 443
+   #certificate: /your/certificate/path
+   #private_key: /your/private/key/path
+external_url: https://domainmuterserahmu.com
+harbor_admin_password: Harbor12345
+database:
+  password: root123
+data_volume: ./data
+log:
+  location: ./var-log-harbor
+
+sudo ./install.sh
+docker compose ps #tunggu sampai selesai running healthy
+docker compose down
+sudo find common/ -type f -exec chmod 0755 \{\} \;
+docker compose up -d 
+
+problem
+https://github.com/goharbor/harbor/issues/7566#issuecomment-992344563
+cd path/to/harbor
+sudo find common/ -type f -exec chmod 0755 \{\} \;
+
+test
+CR=domainmuterserahmu.com
+PU=projectmu/imagemu
+docker login $CR
+docker build -t $CR/$PU .
+docker push $CR/$PU
+docker buildx build --platform linux/amd64 --tag $CR/$PU --push . 
