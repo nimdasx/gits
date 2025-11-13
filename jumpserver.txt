@@ -1,16 +1,44 @@
 jumpserver
 
+- method 1 -
+
 sudo chown dev /opt
 cd /opt
 curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
 cd /opt/jumpserver-installer-v4.10.12
 ./jmsctl.sh down
 
+sudo mkdir /opt/jumpserver/data
+sudo mv /data/jumpserver/* /opt/jumpserver/data
+sudo rmdir /data/jumpserver
+sudo rmdir /data
+
 vim /opt/jumpserver/config/config.txt
 HTTP_PORT=8081
+VOLUME_DIR=/opt/jumpserver/data
 DOMAINS=192.168.x.x:8081
 
 ./jmsctl.sh start 
 
+- method 2 -
+
+sudo chown dev /opt
+cd /opt
+wget https://github.com/jumpserver/installer/releases/download/v4.10.12/jumpserver-installer-v4.10.12.tar.gz
+tar zxvf jumpserver-installer-v4.10.12.tar.gz
+rm jumpserver-installer-v4.10.12.tar.gz
+cd jumpserver-installer-v4.10.12
+
+vim config-example.txt
+HTTP_PORT=8081
+VOLUME_DIR=/opt/jumpserver/data
+DOMAINS=192.168.x.x:8081
+
+./jmsctl.sh install
+./jmsctl.sh start
+
+- url -
+
 http://192.168.x.x:8081
 admin / ChangeMe
+
