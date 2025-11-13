@@ -1,0 +1,16 @@
+jumpserver
+
+sudo chown dev /opt
+cd /opt
+curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+cd /opt/jumpserver-installer-v4.10.12
+./jmsctl.sh down
+
+vim /opt/jumpserver/config/config.txt
+HTTP_PORT=8081
+DOMAINS=192.168.x.x:8081
+
+./jmsctl.sh start 
+
+http://192.168.x.x:8081
+admin / ChangeMe
