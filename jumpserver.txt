@@ -14,8 +14,8 @@ sudo rmdir /data/jumpserver
 sudo rmdir /data
 
 vim /opt/jumpserver/config/config.txt
-HTTP_PORT=8081
 VOLUME_DIR=/opt/jumpserver/data
+HTTP_PORT=8081
 DOMAINS=192.168.x.x:8081
 
 ./jmsctl.sh start 
@@ -30,12 +30,24 @@ rm jumpserver-installer-v4.10.12.tar.gz
 cd jumpserver-installer-v4.10.12
 
 vim config-example.txt
-HTTP_PORT=8081
 VOLUME_DIR=/opt/jumpserver/data
+HTTP_PORT=8081
 DOMAINS=192.168.x.x:8081
 
 ./jmsctl.sh install
 ./jmsctl.sh start
+
+- backup restore -
+
+on old server
+./jmsctl.sh backup_db
+
+on new server
+./jmsctl.sh down
+./jmsctl.sh restore_db ~/jumpserver-v4.10.12-ce-2025-11-14_00:42:34.dump
+./jmsctl.sh start
+
+catatan : password/ssh key gak ikut ke backup restore
 
 - url -
 
