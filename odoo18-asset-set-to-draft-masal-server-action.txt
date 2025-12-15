@@ -1,0 +1,35 @@
+odoo 18 asset set to draft masal pakai server action
+
+Settings → Technical → Actions → Server Actions
+Klik New
+
+type execute code
+model asset/revenue recognition
+allowed groups accounting/bookeeper
+
+code
+
+for asset in records:
+    # hanya proses asset running
+    if asset.state != 'open':
+        continue
+
+    # ambil semua jurnal depresiasi
+    moves = asset.depreciation_move_ids.filtered(
+        lambda m: m.state == 'posted'
+    )
+
+    # batalkan & hapus jurnal
+    for move in moves:
+        move.button_draft()
+        move.unlink()
+
+    # reset asset ke draft
+    asset.write({
+        'state': 'draft'
+    })
+
+
+
+
+create contextual action
