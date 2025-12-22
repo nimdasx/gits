@@ -1,0 +1,31 @@
+odoo custom search child model without custom module
+
+1. open studio
+2. pilih view : search
+3. drag field name or sembarang terserah
+4. close studio
+5. open technical > view yang barusan digenerate oleh studio
+6. edit csbb :
+
+<data>
+  <xpath expr="//field[@name='journal_id']" position="after">
+    <field name="name"
+            string="Custom : Rekanan dari Data Item Jurnal"
+            filter_domain="[('line_ids.partner_id','ilike',self)]"/>
+    <field name="name"
+            string="Custom : Label dari Data Item Jurnal"
+            filter_domain="[('line_ids.name','ilike',self)]"/>
+  </xpath>
+</data>
+
+seperti ini juga bisa tapi gak direkomendasikan 
+
+<data> 
+    <xpath expr="//field[@name='journal_id']" position="after"> 
+        <field name="line_ids" 
+                string="Custom : Rekanan dari Data Item Jurnal" 
+                filter_domain="[('line_ids.partner_id','ilike',self)]"/> 
+        <field name="line_ids" 
+                string="Custom : Label dari Data Item Jurnal"/> 
+    </xpath> 
+</data>
