@@ -1,0 +1,29 @@
+odoo ngisi account move ref otomatsi pas input bank transaction
+
+automation rules
+model   : journal entries
+trigger : after creation (kalo on create and edit lines masih kosong)
+delay   : 1 minutes
+domain  : [("journal_id.type", "in", ["bank", "cash"])]
+
+code    :
+
+# Hanya untuk journal bank / cash
+if record.journal_id and record.journal_id.type in ('bank', 'cash'):
+
+    # HANYA isi kalau ref masih kosong
+    if not record.ref:
+
+        lines = record.line_ids.filtered(lambda l: l.name)
+
+        if lines:
+            record.write({
+                'ref': lines[0].name
+            })
+            # record.message_post(
+            #     body=f"DEBUG: ref diisi dari line -> {lines[0].name}"
+            # )
+        # else:
+        #     record.message_post(
+        #         body="DEBUG: Automation jalan, tapi BELUM ada journal item dengan label"
+        #     )
