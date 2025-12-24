@@ -1,0 +1,27 @@
+cara pakai uv
+
+#install uv kalo belum
+brew install uv
+
+uv python install 3.12
+
+uv python update-shell
+
+#restart shell
+
+#masuk ke folder project
+
+#create venv
+uv venv --python 3.12
+
+#optional kalau pakai cara biasa
+source .venv/bin/activate
+#terus eksekusi python seperti biasa
+#warning, kok dadi pip sik neng global iki
+uv pip install pip
+pip install -r odoo/requirements.txt 
+python odoo/odoo-bin -c odoo_enterprise.conf --dev=all
+
+#kalau mau pakai cara uv
+uv pip install -r odoo/requirements.txt
+uv run python odoo/odoo-bin -c odoo_enterprise.conf --dev=all

@@ -1,0 +1,5 @@
+python mencegah pip install global
+
+~/.pip/pip.conf
+[global]
+require-virtualenv = true

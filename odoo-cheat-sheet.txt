@@ -33,3 +33,10 @@ DELETE FROM ir_model_data WHERE model = '<key error yang muncul di layar>';
 UPDATE res_company
 SET check_account_audit_trail = FALSE
 WHERE check_account_audit_trail IS TRUE;
+
+#odoo reset password user
+python odoo/odoo-bin shell -c odoo.conf --database=jmk 
+user = env['res.users'].search([('login', '=', 'gundul@pacul.web.id')], limit=1)
+user.sudo().write({'password': 'asdsfsf'})
+env.cr.commit()   
+exit()
