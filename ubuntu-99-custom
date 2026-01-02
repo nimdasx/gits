@@ -1,5 +1,6 @@
 #!/bin/bash
 # sudo chmod +x /etc/update-motd.d/99-custom 
+# rename this to 99-custom
 CYAN="\e[36m"
 YELLOW="\e[33m"
 GREEN="\e[32m"

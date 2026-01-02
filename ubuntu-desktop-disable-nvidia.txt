@@ -9,7 +9,14 @@ GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 acpi_osi="
 sudo update-grub
 
 /etc/modprobe.d/blacklist-nouveau.conf
+#options nouveau modeset=0
 blacklist nouveau
-options nouveau modeset=0
+blacklist nvidia
+blacklist nvidia-drm
+blacklist nvidia-modeset
+alias nouveau off
+alias nvidia off
 
 sudo update-initramfs -u
+
+ternyata masih kadang hang, selain di google chrome
