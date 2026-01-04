@@ -1,13 +1,22 @@
 ubuntu desktop disable nvidia mergo crash langsung restart pas switching ke nvidia
 
+#log 
+ternyata masih kadang hang, selain di google chrome
+
+#1
 google chrome 
 Settings > System > uncheck "Use graphics acceleration when available"
 
+#2
 /etc/default/grub
-GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 acpi_osi="
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 acpi_osi="
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 pcie_aspm=off intel_idle.max_cstate=1"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 pcie_aspm=off intel_idle.max_cstate=1 i915.enable_psr=0"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nouveau.modeset=0 pcie_aspm=off intel_idle.max_cstate=1 i915.enable_dc=0 i915.enable_rc6=0"
 
 sudo update-grub
 
+#3
 /etc/modprobe.d/blacklist-nouveau.conf
 #options nouveau modeset=0
 blacklist nouveau
@@ -19,4 +28,12 @@ alias nvidia off
 
 sudo update-initramfs -u
 
-ternyata masih kadang hang, selain di google chrome
+#4
+~/.profile
+export LIBGL_ALWAYS_SOFTWARE=1
+
+#check
+#pastikan hasilnya kosong
+lsmod | grep nouveau
+#Perintah ini akan menampilkan log error (priority 3) dari sesi tepat sebelum restart.
+journalctl -b -1 -p 3
