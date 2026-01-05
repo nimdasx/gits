@@ -28,7 +28,7 @@ alias nvidia off
 
 sudo update-initramfs -u
 
-#4
+#4 fail iki ojo diaktifke marai raiso login desktop
 ~/.profile
 export LIBGL_ALWAYS_SOFTWARE=1
 
