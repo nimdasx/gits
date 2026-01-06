@@ -1,0 +1,7 @@
+imac intel enter recovery mode
+1. power on
+2. hold alt on external keyboard / option on internal keyboard
+
+imac intel enter internet recovery
+1. power on
+2. hold fn+alt on external keyboard 
