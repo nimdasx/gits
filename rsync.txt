@@ -1,0 +1,4 @@
+rsync
+
+#harus pakai root agar owner dan permission bertahan
+sudo rsync --archive --progress --verbose dockerizer/nextcloud root@192.168.0.x:/home/sfx/dockerizer
