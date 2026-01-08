@@ -2,6 +2,7 @@ ubuntu desktop disable nvidia mergo crash langsung restart pas switching ke nvid
 
 #log 
 ternyata masih kadang hang, selain di google chrome
+ternyata karena power supply adaptor watt kurang
 
 #1
 google chrome 
