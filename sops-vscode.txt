@@ -1,0 +1,24 @@
+sops vscode
+
+brew install sops
+
+brew install age
+
+vscode install @signageos/vscode-sops
+
+#buat key
+age-keygen -o ~/.config/sops/age/keys.txt
+
+#buat file .sops.yaml di root folder
+creation_rules:
+  - path_regex: .*\.txt$
+    # encrypted_regex: '^(.*)$'
+    age:
+      - ageagepublickeydarihasilgenerate
+
+#buat file .sopsrc di root folder
+ageKeyFile: /Users/sofyan/.config/sops/age/keys.txt
+
+#buat file baru
+sops telo.txt
+
