@@ -1,0 +1,130 @@
+= sekeneario =
+ada network 192.168.249.0/24 di belakang peer linux
+ada network 192.168.90.0/24 di belakang peer mikrotik
+bagaimana agar net 249.0/24 bisa ngobrol dengan 90.0/24 dan sebaliknya
+butuh hub yang pakai ip public dan dijadikan wireguard portal
+
+= pemahaman =
+di hub/wg-portal, masukkan semua peer
+di masing-masing peer, hanya masukkan peer hub/wg-portal
+ip address masing-masing peer /32 karena route via hub tidak mesh 
+
+= di server yang mau dijadikan hub =
+
+install wireguard portal di ip public
+
+docker-compose.yml
+# https://wgportal.org/latest/documentation/getting-started/docker/
+services:
+  wg-portal:
+    image: wgportal/wg-portal:v2
+    container_name: wg-portal
+    cap_add:
+      - NET_ADMIN
+    ports:
+      # host port : container port
+      # WireGuard port, needs to match the port in wg-portal interface config (add one port mapping for each interface)
+      - "51820:51820/udp" 
+      # Web UI port
+      - "8888:8888/tcp"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      # host path : container path
+      - ./wg/data:/app/data
+      - ./wg/config:/app/config
+
+wg/config/config.yaml
+# https://hub.docker.com/r/wgportal/wg-portal
+core:
+  admin_user: xxx@xxx.xxx.xxx
+  admin_password: xxxxxxxxxx
+web:
+  external_url: http://ip-public-mu-atau-lebih-aman-pakai-ip-lokal:8888
+  request_logging: true
+
+contoh konfig interface wg0 di wireguard portal
+[Interface]
+PrivateKey = x
+#kenapa /24 ? karena dia (hub) pegang semua peer, trafik semua peer via dia
+Address = 10.11.12.1/24
+[Peer]
+# friendly_name = Peer Mikrotik
+PublicKey = x
+PresharedKey = x
+#kanapa ...12.2/32 ? agar kalo ke ...12.2 ke peer mikrotik
+#kenapa ...90.0/24 ? agar kalo ke ...90.0/24 via peer mikrotik ini
+AllowedIPs = 10.11.12.2/32, 192.168.90.0/24
+[Peer]
+# friendly_name = Peer Linux
+PublicKey = x
+PresharedKey = x
+AllowedIPs = 10.11.12.4/32, 192.168.249.0/24
+
+= per linux =
+
+create peer di wg portal
+paste konfig peer ke linux yang mau jadi peer /etc/wireguard/wg0.conf
+
+contoh konfig wg0.conf di peer linux
+[Interface]
+PrivateKey = x
+Address = 10.11.12.4/32
+[Peer]
+# iki peer hub, dan hanya peer hub yang dimasukkan, karena bukan mesh, semua routing via hub
+PublicKey = x
+Endpoint = ip-public-hub:51820
+# ke network tersebut dibawah ini via hub, kenapa yang 249.0/24 tidak dimasukkan? karena 249.0/24 inside peer ini
+AllowedIPs = 10.11.12.0/24,192.168.90.0/24
+PresharedKey = x
+
+sudo wg-quick up wg0
+ip link show wg0
+sudo wg show
+sudo wg-quick down wg0
+
+sudo systemctl enable wg-quick@wg0
+sudo systemctl start wg-quick@wg0
+sudo systemctl status wg-quick@wg0
+
+aktifkan ip forward
+
+buat nat :
+iptables -t nat -A POSTROUTING \
+  -s 10.11.12.0/24 \
+  -d 192.168.249.0/24 \
+  -o ens18 \
+  -j MASQUERADE
+ens18 adalah interface yang pakai ip 192.168.249.x/24
+
+jika ada docker tambahkan konfig firewall :
+sudo iptables -I DOCKER-USER -j ACCEPT
+tapi tidak aman karena all foward allowed
+lebih aman :
+iptables -I DOCKER-USER -i wg0 -o ens18 -j ACCEPT
+iptables -I DOCKER-USER -i ens18 -o wg0 -j ACCEPT
+iptables -I DOCKER-USER -i wg0 -o docker0 -j ACCEPT
+iptables -I DOCKER-USER -i docker0 -o wg0 -j ACCEPT
+
+= per mikrotik =
+create peer di wg portal
+import konfig peer ke mikrotik
+
+confoh konfig 
+[Interface]
+PrivateKey = x
+Address = 10.11.12.2/32
+[Peer]
+PublicKey = x
+Endpoint = ip-public-hub:51820
+AllowedIPs = 10.11.12.0/24,192.168.249.0/24
+PresharedKey = x
+
+add route manual, karena di mikrotik routingnya tidak bisa otomatis
+
+buat nat
+- srcnat
+- src address 10.11.12.0/24
+- dst address 192.168.90.0/24
+- out interface ether yang pakai ip address 192.168.90.x/24
+- action masquerade
