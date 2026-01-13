@@ -65,6 +65,15 @@ AllowedIPs = 10.11.12.4/32, 192.168.249.0/24
 
 create peer di wg portal
 paste konfig peer ke linux yang mau jadi peer /etc/wireguard/wg0.conf
+wireguard-update-wg0.sh
+#!/bin/bash
+TARGET="/etc/wireguard/wg0.conf"
+echo "Paste isi file, lalu tekan Ctrl+D kalau sudah selesai:"
+sudo tee "$TARGET" > /dev/null
+echo "Restarting WireGuard wg0..."
+sudo systemctl restart wg-quick@wg0
+sudo wg show
+echo "Done."
 
 contoh konfig wg0.conf di peer linux
 [Interface]
@@ -89,7 +98,7 @@ sudo systemctl status wg-quick@wg0
 
 aktifkan ip forward
 
-buat nat :
+buat nat agar dari mikrotik bisa akses ke network dibelakang linux :
 iptables -t nat -A POSTROUTING \
   -s 10.11.12.0/24 \
   -d 192.168.249.0/24 \
@@ -121,8 +130,14 @@ AllowedIPs = 10.11.12.0/24,192.168.249.0/24
 PresharedKey = x
 
 add route manual, karena di mikrotik routingnya tidak bisa otomatis
+#1
+- dst address 10.11.12.0/24
+- gateway interface WireGuard
+#2
+- dst address 192.168.249.0/24
+- gateway interface WireGuard
 
-buat nat
+buat nat agar dari linux bisa akses ke network dibelakang mikrotik
 - srcnat
 - src address 10.11.12.0/24
 - dst address 192.168.90.0/24
