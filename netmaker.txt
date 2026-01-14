@@ -1,2 +1,30 @@
 https://docs.netmaker.io/docs/server-installation/quick-install
+
+aktifkan ip forward
+
+sudo vim /etc/sysctl.d/99-sysctl.conf
+sudo sysctl -p
+
+allow forward
+
+iptables.sh
+
+#!/bin/bash
 iptables --policy FORWARD ACCEPT
+
+iptables.service
+
+[Unit]
+Description=iptables FORWARD for Netmaker
+After=network.target docker.service
+[Service]
+Type=oneshot
+ExecStart=/home/dev/iptables.sh
+[Install]
+WantedBy=multi-user.target
+
+sudo ln -s /home/dev/iptables.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable iptables
+sudo systemctl start iptables
+
