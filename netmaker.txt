@@ -1,0 +1,2 @@
+https://docs.netmaker.io/docs/server-installation/quick-install
+iptables --policy FORWARD ACCEPT
