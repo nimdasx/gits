@@ -46,20 +46,22 @@ web:
 contoh konfig interface wg0 di wireguard portal
 [Interface]
 PrivateKey = x
-#kenapa /24 ? karena dia (hub) pegang semua peer, trafik semua peer via dia
+# kenapa /24 ? karena dia (hub) pegang semua peer, trafik semua peer via dia
 Address = 10.11.12.1/24
 [Peer]
 # friendly_name = Peer Mikrotik
 PublicKey = x
 PresharedKey = x
-#kanapa ...12.2/32 ? agar kalo ke ...12.2 ke peer mikrotik
-#kenapa ...90.0/24 ? agar kalo ke ...90.0/24 via peer mikrotik ini
+# kenapa ...12.2/32 ? agar kalo ke ...12.2 ke peer mikrotik
+# kenapa ...90.0/24 ? agar kalo ke ...90.0/24 via peer mikrotik ini
 AllowedIPs = 10.11.12.2/32, 192.168.90.0/24
 [Peer]
 # friendly_name = Peer Linux
 PublicKey = x
 PresharedKey = x
 AllowedIPs = 10.11.12.4/32, 192.168.249.0/24
+# kalau peer linux ini gateway utama untuk ke lokal mana-mana, allowedips diisi : 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+# AllowedIPs = 10.11.12.4/32, 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 
 = per linux =
 
@@ -105,6 +107,7 @@ iptables -t nat -A POSTROUTING \
   -o ens18 \
   -j MASQUERADE
 ens18 adalah interface yang pakai ip 192.168.249.x/24
+update : nat di linux gak perlu, sudah dihandle mikrotik
 
 jika ada docker tambahkan konfig firewall :
 sudo iptables -I DOCKER-USER -j ACCEPT
@@ -136,10 +139,18 @@ add route manual, karena di mikrotik routingnya tidak bisa otomatis
 #2
 - dst address 192.168.249.0/24
 - gateway interface WireGuard
+# atau kalo untuk lokal kemana-mana via wireguard, dst address diisi 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 
 buat nat agar dari linux bisa akses ke network dibelakang mikrotik
 - srcnat
 - src address 10.11.12.0/24
 - dst address 192.168.90.0/24
 - out interface ether yang pakai ip address 192.168.90.x/24
+- action masquerade
+atau yang lebi global
+- srcnat
+- src address 
+buat nat agar dari belakang mikrotik bisa akses ke belakang linux
+- srcnat
+- out interface wg0
 - action masquerade
