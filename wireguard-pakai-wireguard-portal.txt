@@ -107,7 +107,6 @@ iptables -t nat -A POSTROUTING \
   -o ens18 \
   -j MASQUERADE
 ens18 adalah interface yang pakai ip 192.168.249.x/24
-update : nat di linux gak perlu, sudah dihandle mikrotik
 
 jika ada docker tambahkan konfig firewall :
 sudo iptables -I DOCKER-USER -j ACCEPT

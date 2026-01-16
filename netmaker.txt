@@ -1,5 +1,7 @@
 https://docs.netmaker.io/docs/server-installation/quick-install
 
+set *.netmaker.xxx.xxx.xxx di domain mu
+
 aktifkan ip forward
 
 sudo vim /etc/sysctl.d/99-sysctl.conf
@@ -28,3 +30,12 @@ sudo systemctl daemon-reload
 sudo systemctl enable iptables
 sudo systemctl start iptables
 
+~/dockerizer/netmaker
+wget https://raw.githubusercontent.com/gravitl/netmaker/master/scripts/nm-quick.sh
+chmod +x nm-quick.sh
+sudo ./nm-quick.sh
+2
+netmaker.xxx.xxx.xxx
+y
+youremail+netmaker@gmail.com
+y
