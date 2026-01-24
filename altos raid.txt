@@ -1,0 +1,5 @@
+https://www.supermicro.com/support/faqs/faq.php?faq=33041
+https://www.thomas-krenn.com/en/wiki/Avago_EFI_SAS_Driver_is_Unhealthy
+
+altos raid
+avago efi sas driver failed
