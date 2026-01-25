@@ -1,5 +1,18 @@
-https://www.supermicro.com/support/faqs/faq.php?faq=33041
-https://www.thomas-krenn.com/en/wiki/Avago_EFI_SAS_Driver_is_Unhealthy
-
 altos raid
 avago efi sas driver failed
+
+https://www.supermicro.com/support/faqs/faq.php?faq=33041
+https://www.thomas-krenn.com/en/wiki/Avago_EFI_SAS_Driver_is_Unhealthy
+https://forum.proxmox.com/threads/proxmox-wont-install-on-ssd-connected-to-avago-9341-4i-card.113182/
+
+ada kemungkinan proxmox tidak kompatible dengan avago, downgrade ke kernel 5? downgrade proxmox 7?
+
+kalau mau disable avago :
+- bios
+- advanced
+- pcie/pci/pnp configuration
+- cpu clot6 pci-e 3.0 x8(in x16) oprom : disabled
+bukan solusi karena hdd yang pakai controller itu jadi gak bisa dipakai
+
+yang sudah dilakukan
+- disable semua EFI kecuali clot6 pci-e 3.0 x8(in x16) oprom yang digunakan avago 
