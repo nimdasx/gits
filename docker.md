@@ -1,5 +1,19 @@
 # docker
 
+## mempersempit alokasi per container biar bisa banyak container
+```
+#/etc/docker/daemon.json
+{
+  "default-address-pools": [
+    {
+      "base": "172.18.0.0/15",
+      "size": 24
+    }
+  ]
+}
+
+```
+
 ## lokal builder for amd64, remote builder for arm64
 https://dev.to/aboozar/build-docker-multi-platform-image-using-buildx-remote-builder-node-5631
 ```
