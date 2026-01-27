@@ -1,24 +1,24 @@
 #!/bin/bash
 
 #sebelumnya eksekusi ini dulu
-#export MYSQL_USER="username_db"
 #export MYSQL_PASSWORD="password_db"
 
 # ====== VALIDASI PARAMETER ======
-if [ "$#" -ne 5 ]; then
-  echo "Usage: $0 <host> <port> <database> <zip_password> <backup_zip>"
+if [ "$#" -ne 6 ]; then
+  echo "Usage: $0 <host> <port> <user> <database> <zip_password> <backup_zip>"
   exit 1
 fi
 
 HOST="$1"
 PORT="$2"
-DB_NAME="$3"
-ZIP_PASS="$4"
-ZIP_FILE="$5"
+MYSQL_USER="$3"
+DB_NAME="$4"
+ZIP_PASS="$5"
+ZIP_FILE="$6"
 
 # ====== VALIDASI ENV MYSQL ======
-if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
-  echo "ERROR: MYSQL_USER dan MYSQL_PASSWORD harus diset di environment"
+if [ -z "$MYSQL_PASSWORD" ]; then
+  echo "ERROR: MYSQL_PASSWORD harus diset di environment"
   exit 1
 fi
 
@@ -50,7 +50,7 @@ fi
 
 # ====== RESTORE STRUCTURE ======
 echo "🔧 Restore structure..."
-mysql \
+mysql --no-defaults --skip-ssl \
   -h "$HOST" \
   -P "$PORT" \
   -u "$MYSQL_USER" \
@@ -65,7 +65,7 @@ fi
 
 # ====== RESTORE DATA ======
 echo "📦 Restore data..."
-mysql \
+mysql --no-defaults --skip-ssl \
   -h "$HOST" \
   -P "$PORT" \
   -u "$MYSQL_USER" \

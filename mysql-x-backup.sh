@@ -1,37 +1,44 @@
 #!/bin/bash
 
+#catatan
+#
 #sebelumnya eksekusi ini dulu
-#export MYSQL_USER="username_db"
 #export MYSQL_PASSWORD="password_db"
-
+#
+#di server --skip-ssl tidak ada, hapus aja
 
 # ====== VALIDASI PARAMETER ======
-if [ "$#" -ne 4 ]; then
-  echo "Usage: $0 <host> <port> <database> <zip_password>"
+if [ "$#" -ne 5 ]; then
+  echo "Usage: $0 <host> <port> <user> <database> <zip_password>"
   exit 1
 fi
 
 HOST="$1"
 PORT="$2"
-DB_NAME="$3"
-ZIP_PASS="$4"
+MYSQL_USER="$3"
+DB_NAME="$4"
+ZIP_PASS="$5"
 
 # ====== VALIDASI ENV MYSQL ======
-if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
-  echo "ERROR: MYSQL_USER dan MYSQL_PASSWORD harus diset di environment"
+if [ -z "$MYSQL_PASSWORD" ]; then
+  echo "ERROR: MYSQL_PASSWORD harus diset di environment"
   exit 1
 fi
 
 # ====== TIMESTAMP ======
 TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
 
+# ====== OUTPUT DIR ======
+BACKUP_DIR="./mysql-x-backup"
+mkdir -p "$BACKUP_DIR"
+
 # ====== NAMA FILE ======
-STRUCT_FILE="${HOST}-${DB_NAME}-${TIMESTAMP}-structure.sql"
-DATA_FILE="${HOST}-${DB_NAME}-${TIMESTAMP}-data.sql"
-ZIP_FILE="${HOST}-${DB_NAME}-${TIMESTAMP}.sql.zip"
+STRUCT_FILE="${BACKUP_DIR}/${HOST}-${DB_NAME}-${TIMESTAMP}-structure.sql"
+DATA_FILE="${BACKUP_DIR}/${HOST}-${DB_NAME}-${TIMESTAMP}-data.sql"
+ZIP_FILE="${BACKUP_DIR}/${HOST}-${DB_NAME}-${TIMESTAMP}.sql.zip"
 
 # ====== BACKUP STRUCTURE ======
-mysqldump \
+mysqldump --no-defaults --skip-ssl \
   -h "$HOST" \
   -P "$PORT" \
   -u "$MYSQL_USER" \
@@ -50,7 +57,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # ====== BACKUP DATA ======
-mysqldump \
+mysqldump --no-defaults --skip-ssl \
   -h "$HOST" \
   -P "$PORT" \
   -u "$MYSQL_USER" \
@@ -58,6 +65,9 @@ mysqldump \
   --no-create-info \
   --skip-triggers \
   --single-transaction \
+  --ignore-table="${DB_NAME}.cr_log_akses" \
+  --ignore-table="${DB_NAME}.cr_log_error" \
+  --ignore-table="${DB_NAME}.cr_log_out" \
   "$DB_NAME" > "$DATA_FILE"
 
 if [ $? -ne 0 ]; then
