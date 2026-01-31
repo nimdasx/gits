@@ -59,6 +59,12 @@ echo "Finding and backing up associated Docker volumes..."
 # Go to project dir to correctly identify project-specific volumes
 cd "$SOURCE_DIR"
 
+# Check if docker-compose services are running
+if [ -n "$(docker compose ps -q --filter "status=running")" ]; then
+    echo "Error: Docker Compose services are currently running. Please stop them before backing up to ensure data consistency."
+    exit 1
+fi
+
 echo "Ensuring containers and volumes are created (will not start them)..."
 docker compose up --no-start
 if [ $? -ne 0 ]; then
@@ -104,6 +110,10 @@ else
         fi
     done
 fi
+
+echo "Cleaning up containers..."
+docker compose down
+
 cd - > /dev/null
 
 
