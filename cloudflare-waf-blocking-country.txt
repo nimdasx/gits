@@ -1,0 +1,12 @@
+cloudflare waf blocking country not from indonesia
+1. pilih domain
+
+2. pastikan proxy dicentang
+
+3. security > security rules > create rule
+(not ip.src.country in {"ID"} and http.host in {"qqq.xxx.co.id" "aaa.xxx.co.id"})
+action : block
+
+4. rule pengecualian
+(ip.src eq 138.2.66.39)
+action : skip
