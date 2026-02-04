@@ -8,5 +8,5 @@ cloudflare waf blocking country not from indonesia
 action : block
 
 4. rule pengecualian
-(ip.src eq 138.2.66.39)
+(ip.src eq x.x.x.x)
 action : skip
