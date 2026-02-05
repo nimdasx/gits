@@ -9,13 +9,15 @@ scp ke server proxmox
 
 #3
 buat vm kosong tanpa disk, bios uefi, buat disk untuk uefi
+bios : ovmf (uefi)
+machine : q35
 
 #4
 import qcow2 file ke guest
 qm importdisk id-vm rhel-composer-api-xxxx-disk.qcow2 <storage-proxmox>
 
 #5
-attack disk ke guest
+attack disk ke guest, rubah boot order ke disk hasil import jadi yang pertama
 
 #6
 test boot
