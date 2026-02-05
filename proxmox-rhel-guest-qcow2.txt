@@ -1,0 +1,22 @@
+proxmox rhel guest qcow2
+
+#1
+generate qcow2 dari portal redhat
+composer-api-xxxx-disk.qcow2
+
+#2
+scp ke server proxmox
+
+#3
+buat vm kosong tanpa disk, bios uefi, buat disk untuk uefi
+
+#4
+import qcow2 file ke guest
+qm importdisk id-vm rhel-composer-api-xxxx-disk.qcow2 <storage-proxmox>
+
+#5
+attack disk ke guest
+
+#6
+test boot
+
