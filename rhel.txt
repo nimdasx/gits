@@ -1,0 +1,20 @@
+
+
+nmcli connection add \
+  type ethernet \
+  ifname ens18 \
+  con-name ens18 \
+  ipv4.method manual \
+  ipv4.addresses 192.168.10.50/24 \
+  ipv4.gateway 192.168.10.1 \
+  ipv4.dns "8.8.8.8 1.1.1.1"
+
+nmcli connection up ens18
+
+sudo hostnamectl set-hostname qwe
+
+sudo visudo -f /etc/sudoers.d/xxx
+xxx ALL=(ALL) NOPASSWD:ALL
+
+sudo dnf update
+sudo dnf upgrade
