@@ -1,5 +1,10 @@
 jumpserver
 
+- upgrade -
+wget dan extract tar.gz dari https://github.com/jumpserver/jumpserver/releases
+./jmsctl.sh upgrade
+rm yang lama
+
 - method 1 -
 
 sudo chown dev /opt
