@@ -1,0 +1,26 @@
+#ref
+https://www.reddit.com/r/openclaw/comments/1rcd9a4/telegram_plugin_disable/
+https://github.com/openclaw/openclaw/issues/6085
+
+#install
+npm install -g openclaw@v2026.2.21
+
+#model
+openclaw onboard
+
+#web ui
+openclaw configure
+local > gateway > lan > token
+set nginx proxy manager
+192.168.x.x:18789
+buka https inject dengan param token 
+https://x.x.x.x/chat?token=pastetokendarihasilconfiguretadi
+approve
+openclaw devices approve
+
+#telegram
+buat dulu bot di telegram pakai botfather, catat token
+openclaw configure
+masukkan token
+chat dari telegram
+openclaw pairing approve telegram xxx
