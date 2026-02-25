@@ -24,3 +24,5 @@ openclaw configure
 masukkan token
 chat dari telegram
 openclaw pairing approve telegram xxx
+
+~/.config/systemd/user/openclaw-gateway.service
