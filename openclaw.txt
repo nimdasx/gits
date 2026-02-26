@@ -80,7 +80,9 @@ openclaw config set models.providers.ollama '{
       },
       "models": {
         "openai/gpt-5.2-chat-latest": {},
-        "ollama/llama3.2:latest": {}
+        "ollama/llama3.2:latest": {},
+        "ollama/kimi-k2.5:cloud": {},
+        "ollama/phi:latest": {}
       },
       "workspace": "/home/sfx/.openclaw/workspace",
       "compaction": {
