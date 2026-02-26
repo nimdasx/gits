@@ -1,0 +1,45 @@
+#ollama on rhel
+
+sudo dnf install wget zstd
+
+#download and check
+wget https://ollama.com/download/ollama-linux-amd64.tar.zst
+#untu cek isi-nya tanpa install 
+tar -tf ollama-linux-amd64.tar.zst
+
+#kalo mau hajar install langsung
+curl -fsSL https://ollama.com/install.sh | sh
+
+#bind ke all address
+sudo systemctl edit ollama.service
+
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0"
+
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+
+ss -tulnp | grep 11434
+
+sudo firewall-cmd --add-port=11434/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --remove-port=11434/tcp --permanent
+sudo firewall-cmd --add-rich-rule='rule family="ipv4" source address="192.168.x.x" port protocol="tcp" port="11434" accept' --permanent
+sudo firewall-cmd --reload
+
+curl http://192.168.5.245:11434
+
+#openwebui
+ervices:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "8080:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./app-backend-data:/app/backend/data
