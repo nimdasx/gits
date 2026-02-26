@@ -28,7 +28,7 @@ sudo firewall-cmd --remove-port=11434/tcp --permanent
 sudo firewall-cmd --add-rich-rule='rule family="ipv4" source address="192.168.x.x" port protocol="tcp" port="11434" accept' --permanent
 sudo firewall-cmd --reload
 
-curl http://192.168.5.245:11434
+curl http://192.168.x.x:11434
 
 #openwebui
 ervices:
