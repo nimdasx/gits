@@ -1,0 +1,3 @@
+ip route show dev wt0 table netbird
+cat /etc/iproute2/rt_tables
+ip -4 route show table all
