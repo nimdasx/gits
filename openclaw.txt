@@ -1,3 +1,8 @@
+#14
+openclaw completion --install
+openclaw doctor --generate-gateway-token
+openclaw dashboard --no-open
+
 #ref
 https://www.reddit.com/r/openclaw/comments/1rcd9a4/telegram_plugin_disable/
 https://github.com/openclaw/openclaw/issues/6085
