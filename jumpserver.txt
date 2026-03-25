@@ -1,5 +1,9 @@
 jumpserver
 
+- update -
+install error, sudah downgrade 16 15 14 tetep error
+[ERROR] Failed to change the table structure!
+
 - upgrade -
 wget dan extract tar.gz dari https://github.com/jumpserver/jumpserver/releases
 ./jmsctl.sh upgrade
@@ -29,7 +33,7 @@ DOMAINS=192.168.x.x:8081
 
 sudo chown dev /opt
 cd /opt
-wget https://github.com/jumpserver/installer/releases/download/v4.10.12/jumpserver-installer-v4.10.12.tar.gz
+wget https://github.com/jumpserver/installer/releases/download/v4.10.16/jumpserver-installer-v4.10.16.tar.gz
 tar zxvf jumpserver-installer-v4.10.12.tar.gz
 rm jumpserver-installer-v4.10.12.tar.gz
 cd jumpserver-installer-v4.10.12
