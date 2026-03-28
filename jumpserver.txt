@@ -1,35 +1,17 @@
 jumpserver
 
-- update -
-install error, sudah downgrade 16 15 14 tetep error
+- changelog -
+
+install error, sudah downgrade 16 15 14 tetep error, di sl410
 [ERROR] Failed to change the table structure!
 
 - upgrade -
-wget dan extract tar.gz dari https://github.com/jumpserver/jumpserver/releases
+
+wget dan extract tar.gz dari https://github.com/jumpserver/installer/releases
 ./jmsctl.sh upgrade
 rm yang lama
 
-- method 1 -
-
-sudo chown dev /opt
-cd /opt
-curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
-cd /opt/jumpserver-installer-v4.10.12
-./jmsctl.sh down
-
-sudo mkdir /opt/jumpserver/data
-sudo mv /data/jumpserver/* /opt/jumpserver/data
-sudo rmdir /data/jumpserver
-sudo rmdir /data
-
-vim /opt/jumpserver/config/config.txt
-VOLUME_DIR=/opt/jumpserver/data
-HTTP_PORT=8081
-DOMAINS=192.168.x.x:8081
-
-./jmsctl.sh start 
-
-- method 2 -
+- install -
 
 sudo chown dev /opt
 cd /opt
@@ -64,3 +46,22 @@ catatan : password/ssh key gak ikut ke backup restore
 http://192.168.x.x:8081
 admin / ChangeMe
 
+- install method lama -
+
+sudo chown dev /opt
+cd /opt
+curl -sSL https://github.com/jumpserver/jumpserver/releases/latest/download/quick_start.sh | bash
+cd /opt/jumpserver-installer-v4.10.12
+./jmsctl.sh down
+
+sudo mkdir /opt/jumpserver/data
+sudo mv /data/jumpserver/* /opt/jumpserver/data
+sudo rmdir /data/jumpserver
+sudo rmdir /data
+
+vim /opt/jumpserver/config/config.txt
+VOLUME_DIR=/opt/jumpserver/data
+HTTP_PORT=8081
+DOMAINS=192.168.x.x:8081
+
+./jmsctl.sh start 
