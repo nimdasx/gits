@@ -17,12 +17,46 @@ fi
 
 
 # --- Validation ---
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <path_to_docker_compose_folder>"
+AUTO_STOP=0
+SOURCE_DIR_ARG=""
+DEST_DIR_ARG="./docker-backup"
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -s|--stop-running) AUTO_STOP=1; shift ;;
+        -d|--dest)
+            if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+                DEST_DIR_ARG="$2"
+                shift 2
+            else
+                echo "Error: Argument for $1 is missing" >&2
+                exit 1
+            fi
+            ;;
+        -*)
+            echo "Unknown option passed: $1"
+            echo "Usage: $0 [-s|--stop-running] [-d|--dest <backup_destination>] <path_to_docker_compose_folder>"
+            exit 1
+            ;;
+        *)
+            if [ -z "$SOURCE_DIR_ARG" ]; then
+                SOURCE_DIR_ARG="$1"
+            else
+                echo "Unknown parameter passed: $1"
+                echo "Usage: $0 [-s|--stop-running] [-d|--dest <backup_destination>] <path_to_docker_compose_folder>"
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$SOURCE_DIR_ARG" ]; then
+    echo "Usage: $0 [-s|--stop-running] [-d|--dest <backup_destination>] <path_to_docker_compose_folder>"
     exit 1
 fi
 
-SOURCE_DIR=$(realpath "$1")
+SOURCE_DIR=$(realpath "$SOURCE_DIR_ARG")
 PROJECT_NAME=$(basename "$SOURCE_DIR")
 
 if [ ! -d "$SOURCE_DIR" ]; then
@@ -60,9 +94,17 @@ echo "Finding and backing up associated Docker volumes..."
 cd "$SOURCE_DIR"
 
 # Check if docker-compose services are running
+WAS_RUNNING=0
 if [ -n "$(docker compose ps -q --filter "status=running")" ]; then
-    echo "Error: Docker Compose services are currently running. Please stop them before backing up to ensure data consistency."
-    exit 1
+    if [ "$AUTO_STOP" -eq 1 ]; then
+        echo "Docker Compose services are running. Automatically stopping them..."
+        docker compose down
+        WAS_RUNNING=1
+    else
+        echo "Error: Docker Compose services are currently running."
+        echo "Please stop them manually, or run this script with '-s' or '--stop-running' to automatically stop and restart them."
+        exit 1
+    fi
 fi
 
 echo "Ensuring containers and volumes are created (will not start them)..."
@@ -111,8 +153,13 @@ else
     done
 fi
 
-echo "Cleaning up containers..."
-docker compose down
+if [ "$WAS_RUNNING" -eq 1 ]; then
+    echo "Restarting Docker Compose services..."
+    docker compose up -d
+else
+    echo "Cleaning up containers..."
+    docker compose down
+fi
 
 cd - > /dev/null
 
@@ -120,8 +167,7 @@ cd - > /dev/null
 # --- Archiving ---
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 BACKUP_FILENAME="${PROJECT_NAME}-${TIMESTAMP}.tar.gz"
-BACKUP_DEST_DIR="./${PROJECT_NAME}"
-BACKUP_DEST_DIR="./docker-backup"
+BACKUP_DEST_DIR="${DEST_DIR_ARG}"
 
 mkdir -p "$BACKUP_DEST_DIR"
 
