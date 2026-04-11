@@ -1,3 +1,8 @@
+#matikan semua docker compose
+docker compose ls --format json \
+| jq -r '.[].ConfigFiles' \
+| xargs -I{} docker compose -f {} down
+
 #format ps
 docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
 
