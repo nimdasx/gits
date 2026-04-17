@@ -1,12 +1,18 @@
-install cloudflared tunnel on ubuntu
+# Install Cloudflared Tunnel on Ubuntu
 
+1. Add Cloudflare GPG Key:
 sudo mkdir -p --mode=0755 /usr/share/keyrings
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
 
+2. Add Cloudflare Repository:
 echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
 
+3. Install cloudflared:
 sudo apt-get update && sudo apt-get install cloudflared
 
-zerotrust > network > tunnel > add
+4. Create Tunnel via Dashboard:
+Zero Trust Dashboard -> Networks -> Tunnels -> Add a tunnel
 
-sudo cloudflared service install xxxx
+5. Install Tunnel Service:
+sudo cloudflared service install <TOKEN_ANDA>
+
