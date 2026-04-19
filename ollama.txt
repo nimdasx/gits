@@ -1,3 +1,6 @@
+#ollama cek model
+http://192.168.x.x:11434/api/tags
+
 #ollama on rhel
 
 sudo dnf install wget zstd
@@ -14,6 +17,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 sudo systemctl edit ollama.service
 
 [Service]
+Environment="OLLAMA_MODELS=/xx/ollama_models"
 Environment="OLLAMA_HOST=0.0.0.0"
 
 sudo systemctl daemon-reload

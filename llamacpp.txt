@@ -1,0 +1,26 @@
+https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF
+
+https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf?download=true
+
+https://github.com/ggml-org/llama.cpp/releases/download/b8848/llama-b8848-bin-ubuntu-x64.tar.gz
+
+http://192.168.x.x:8080/api/tags
+
+./llama-server \
+  -m ~/gguf/gemma-4-E4B-it-Q4_K_M.gguf \
+  --host 0.0.0.0 \
+  --port 8080 \
+  -t 48 \
+  --alias gemma4:e4b
+
+
+      "pve02-llamacpp": {
+        "baseUrl": "http://192.168.x.x:8080/v1",
+        "apiKey": "xx",
+        "api":"openai-completions",
+        "models": []
+      }
+
+52 x Intel(R) Xeon(R) Gold 5320 CPU @ 2.20GHz (1 Socket)
+ram 128
+tetep njepat 100% ra bar-bar dinggo openclaw
