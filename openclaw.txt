@@ -1,3 +1,14 @@
+#permission allow slash command
+  "commands": {
+    "allowFrom": {
+      "telegram": ["id-telegram-mu"],
+      "discord": [
+        "user:id-discord-mu",
+        "id-discordmu"
+      ]
+    }
+  },
+
 #14
 openclaw completion --install
 openclaw doctor --generate-gateway-token
