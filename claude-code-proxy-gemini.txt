@@ -14,6 +14,10 @@ masuk ke folder gemini-proxy
 
 kopi env.example ke .env
 
+edit file config.yaml, tambahkan ini 
+general_settings:
+  master_key: ewewekekwek2sdsad
+
 isi GEMINI_API_KEY dengan key kamu dari google aistudio
 
 jalankan docker 
@@ -44,7 +48,7 @@ buat file settings.json di dalam folder .claude , isi file sbb
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://x.x.x.x:3455",
-    "ANTHROPIC_AUTH_TOKEN": "sk-xxx"
+    "ANTHROPIC_AUTH_TOKEN": "ewewekekwek2sdsad"
   }
 }
 
