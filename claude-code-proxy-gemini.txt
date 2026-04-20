@@ -1,0 +1,51 @@
+sumber :
+https://medium.com/@sydasif78/claude-code-gemma-4-and-gemini-api-539fb72d0188
+
+---
+
+buat proxy litellm :
+
+masuk ke folder dockerizer
+
+clone gemini-proxy
+git@github.com:sydasif/gemini-proxy.git
+
+masuk ke folder gemini-proxy
+
+kopi env.example ke .env
+
+isi GEMINI_API_KEY dengan key kamu dari google aistudio
+
+jalankan docker 
+
+docker compose up -d --build
+
+cek dengan browse http://x.x.x.x:3455
+
+btw, kalo gak mau bikin proxy litellm sendiri, bisa pakai proxy litellm punya temen kamu
+
+---
+
+setting di vscode / code server :
+
+install Claude Code for VS Code dari extensi vscode / code server
+
+install claude code yang versi terminal
+curl -fsSL https://claude.ai/install.sh | bash
+
+jalankan claude dari terminal
+- login pakai opsi ke dua, skip billing
+
+buat folder project baru, atau open existing project 
+
+buat folder .claude
+
+buat file settings.json di dalam folder .claude , isi file sbb 
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://x.x.x.x:3455",
+    "ANTHROPIC_AUTH_TOKEN": "sk-xxx"
+  }
+}
+
+claude code siap digunakan
