@@ -1,0 +1,26 @@
+
+--- buat litellm proxy gemini pakai docker ---
+
+pakai template ini : https://github.com/nimdasx/docker-compose-collection/tree/main/litellm-proxy-gemini
+
+atau pakai proxy lite llm punya temenmu
+
+--- setting di vscode / code server ---
+
+install Claude Code for VS Code dari extensi vscode / code server
+
+install claude code yang versi terminal
+curl -fsSL https://claude.ai/install.sh | bash
+
+jalankan claude dari terminal
+- login pakai opsi ke dua, skip billing
+
+buat file .claude/settings.json di home directory atau di folder project, isinya ini :
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://x.x.x.x:4000",
+    "ANTHROPIC_AUTH_TOKEN": "sesuaikan-dengan-master_key-di-litellm-proxy-gemini"
+  }
+}
+
+claude code siap digunakan
