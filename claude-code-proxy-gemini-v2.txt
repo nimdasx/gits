@@ -23,4 +23,7 @@ buat file .claude/settings.json di home directory atau di folder project, isinya
   }
 }
 
-claude code siap digunakan
+--- lain lain ---
+
+kalau mau menjalankan claude code pakai model tertentu
+claude --model gemini-3.1-flash-lite-preview
