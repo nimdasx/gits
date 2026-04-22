@@ -1,8 +1,8 @@
 # docker
 
 ## mempersempit alokasi per container biar bisa banyak container
+/etc/docker/daemon.json
 ```
-#/etc/docker/daemon.json
 {
   "default-address-pools": [
     {
