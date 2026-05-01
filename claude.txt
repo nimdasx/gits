@@ -1,0 +1,2 @@
+#run pakai custom file setting
+claude --settings ~/.claude/telopende.json
