@@ -1,2 +1,12 @@
 #run pakai custom file setting
 claude --settings ~/.claude/telopende.json
+
+#claude code pakai model dari amazon berdock
+#konfig claude code settings.json
+{
+  "env": {
+    "CLAUDE_CODE_USE_BEDROCK": "1",
+    "AWS_REGION": "ap-southeast-3",
+    "AWS_BEARER_TOKEN_BEDROCK": "ganti-dengan-api-key-amazon-berdock-kamu"
+  }
+}
