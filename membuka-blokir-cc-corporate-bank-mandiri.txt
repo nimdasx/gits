@@ -1,0 +1,27 @@
+membuka blokir cc corporate
+kartu kredit perusahaan
+bank mandiri
+
+caranya :
+mengirim email
+ 
+from :
+gunakan email contact person perusahaan yang terdaftar di pendaftaran kartu kredit corporate
+
+to :
+helpdesk.corporate_card@bankmandiri.co.id
+
+cc :
+Direktur
+
+subject :
+pembukaan akses transaksi
+
+body email :
+mohon dibuka akses transaksi online
+nama : Pemegang Kartu Kredit biasanya direktur
+nama perusahaan : isi dengan nama perusahaan
+nomor kartu kredit corporate : isi dengan nomor kartu kredit
+nama mercant (isi dengan list nama mercant yang gagal transaksi)
+- google workspace misalnya, rutin setiap bulan, estimasi xxx usd
+- apple developer account misalnya, setiap 1 tahun, estimasi xxx usd
