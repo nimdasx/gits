@@ -1,0 +1,5 @@
+imac install ubuntu
+
+Nyalakan iMac sambil tahan tombol OPTION (Alt) sampai muncul boot menu
+
+udah itu doang 
