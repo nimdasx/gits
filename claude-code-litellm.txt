@@ -7,7 +7,8 @@ buat llm credential, misal dari nvidia
 
 daftarkan model, misal dari nvidia z-ai/glm-5.2
 
-~/.claude/settings.json
+kalau mau ke semua-nya edit file ~/.claude/settings.json
+kalau hanya by project edit file nama-folder-project-mu/.claude/settings.local.json atau settings.json dan jangan lupa harus di .gitignore
 {
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "virtual-key-dari-litellm-kamu",
