@@ -1,0 +1,17 @@
+install litellm
+https://docs.litellm.ai/docker-compose.yml
+
+buat virtual keys
+
+buat llm credential, misal dari nvidia
+
+daftarkan model, misal dari nvidia z-ai/glm-5.2
+
+~/.claude/settings.json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "virtual-key-dari-litellm-kamu",
+    "ANTHROPIC_BASE_URL": "url-litellm-kamu",
+    "ANTHROPIC_CUSTOM_MODEL_OPTION": "model-name-yang-kamu-daftarkan-di-litellm-kamu"
+  }
+}
