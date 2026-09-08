@@ -1,0 +1,12 @@
+~/.local/share/applications/antigravity.desktop
+
+[Desktop Entry]
+Type=Application
+Name=Antigravity
+Exec=/home/sfx/Applications/AntigravityIDE/antigravity-ide
+Icon=/home/sfx/Applications/AntigravityIDE/resources/app/resources/linux/code.png
+Terminal=false
+
+update-desktop-database ~/.local/share/applications
+
+buka show app, klik kanan antigravity, klik pin to dock
