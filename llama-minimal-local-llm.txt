@@ -1,0 +1,9 @@
+llama minimal local llm
+
+https://github.com/mozilla-ai/llamafile/releases/download/0.10.5/llamafile-0.10.5
+https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q8_0.gguf?download=true
+chmod +x llamafile-0.10.5
+./llamafile-0.10.5 -m Qwen3-0.6B-Q8_0.gguf --server
+di mac perlu allow execution di setting
+
+https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q8_0.gguf?download=true
