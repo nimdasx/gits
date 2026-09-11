@@ -1,6 +1,6 @@
-# Mapping Tipe Akun (Chart of Accounts) Odoo 19 — Inggris ⇄ Indonesia
+# Referensi Chart of Accounts (CoA) Odoo 19 — Indonesia
 
-Referensi umum tipe akun (`account_type`) dan kelompok internal (`internal_group`) pada Chart of Accounts Odoo 19, lengkap dengan padanan Bahasa Indonesia, id teknis, external id, dan default value-nya.
+Referensi tipe akun (`account_type`) dan kelompok internal (`internal_group`) pada Chart of Accounts Odoo 19: padanan Bahasa Inggris ⇄ Indonesia, id teknis & external id, default value, konvensi posisi debit/kredit untuk opening balance, serta daftar 114 akun default yang di-preload untuk lokalisasi Indonesia (`l10n_id`).
 
 Sumber:
 - Definisi field & logika default: `odoo/addons/account/models/account_account.py`
@@ -82,6 +82,16 @@ Ada 3 field terkait di `account.account` ([account_account.py:116-118](odoo/addo
 Ketiganya `compute='_compute_opening_debit_credit'` ([account_account.py:577-603](odoo/addons/account/models/account_account.py#L577-L603)), dengan inverse setter ([account_account.py:676-689](odoo/addons/account/models/account_account.py#L676-L689)) yang menulis balik ke journal item pembukaan. Saat field `opening_balance` (nilai tunggal) diisi, Odoo otomatis memecahnya: **nilai positif → ditulis ke `opening_debit`; nilai negatif → ditulis ke `opening_credit`** (baris 688-689).
 
 **Penting:** Odoo **tidak membatasi/memvalidasi** sisi debit atau kredit berdasarkan `account_type` — tidak ada constraint di kode yang mencegah mengisi `opening_debit` pada akun liability, atau `opening_credit` pada akun asset. Kedua kolom bisa diisi bebas untuk akun jenis apa pun; menentukan sisi yang "benar" sepenuhnya mengikuti konvensi akuntansi *double-entry* standar (bukan aturan yang di-hardcode Odoo).
+
+### Kalau total debit ≠ credit saat import: auto-balancing ke akun `equity_unaffected`
+
+Odoo **tidak menolak** import `opening_debit`/`opening_credit` yang tidak balance. Alurnya (murni core `odoo/addons/account/`, tidak ada override di Enterprise):
+
+1. Import memicu precommit hook `_load_precommit_update_opening_move` ([account_account.py:698-700](odoo/addons/account/models/account_account.py#L698-L700)) → memanggil `company._update_opening_move()` ([company.py:865](odoo/addons/account/models/company.py#L865)).
+2. Fungsi ini **selalu** menambahkan satu baris penyeimbang bernama **"Automatic Balancing Line"** ([company.py:907, 940-941](odoo/addons/account/models/company.py#L907)) ke akun hasil `get_unaffected_earnings_account()` ([company.py:833-863](odoo/addons/account/models/company.py#L833-L863)) — akun pertama yang ditemukan dengan `account_type = 'equity_unaffected'` milik perusahaan (kalau belum ada, Odoo otomatis membuat satu baru, kode mendekati `999999`, nama "Profit or Loss Appropriation").
+3. Arah baris penyeimbang: kalau total kredit > debit → dibuat baris **Debit** sebesar selisihnya di akun tsb (dan sebaliknya).
+
+**Implikasi:** selisih debit/kredit yang tidak ditelusuri akan otomatis "menghilang" ke akun `equity_unaffected` sebagai entry tanpa peringatan — bisa membuat neraca pembukaan terlihat rugi/untung besar secara fiktif kalau penyebab sebenarnya cuma data yang belum lengkap/salah kolom. Selalu pastikan total debit = credit **sebelum** import, jangan mengandalkan mekanisme auto-balancing ini.
 
 ### Posisi normal per tipe akun (konvensi akuntansi standar)
 
