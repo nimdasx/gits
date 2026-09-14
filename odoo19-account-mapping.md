@@ -134,6 +134,8 @@ Dikonfigurasi di [`template_id.py`](odoo/addons/l10n_id/models/template_id.py):
 
 ### Daftar lengkap 114 akun preload
 
+*Kolom "Posisi Normal Opening Balance" berikut mengikuti konvensi akuntansi standar per `account_type` (lihat tabel [Posisi normal per tipe akun](#posisi-normal-per-tipe-akun-konvensi-akuntansi-standar) di atas), **kecuali** akun bertanda `*` yang merupakan akun kontra — lihat catatan pengecualian di atas.*
+
 | Kode | Nama (Inggris) | Nama (Indonesia) | Tipe Akun (`account_type`) | Label Tipe (ID) | Posisi Normal Opening Balance | Reconcile |
 |---|---|---|---|---|---|---|
 | `11110001` | Cash | — | `asset_cash` | Bank dan Tunai | Debit | Tidak |
@@ -158,9 +160,9 @@ Dikonfigurasi di [`template_id.py`](odoo/addons/l10n_id/models/template_id.py):
 | `12210010` | Office Building | Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
 | `12210020` | Vehicle | Kendaraan | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
 | `12210030` | Office Supplies | Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12281010` | Accumulation Building Depreciation | Akumulasi Penyusutan Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12281020` | Accumulation Vehicle Depreciation | Akumulasi Penyusutan Kendaraan | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12281030` | Accumulation Office Supplies Depreciation | Akumulasi Penyusutan Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
+| `12281010` | Accumulation Building Depreciation | Akumulasi Penyusutan Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
+| `12281020` | Accumulation Vehicle Depreciation | Akumulasi Penyusutan Kendaraan | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
+| `12281030` | Accumulation Office Supplies Depreciation | Akumulasi Penyusutan Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
 | `21100010` | Account Payable | Hutang Usaha | `liability_payable` | Utang | Kredit | Ya |
 | `21100011` | VAT Payable | — | `liability_payable` | Utang | Kredit | Ya |
 | `21100012` | STLG Payable | — | `liability_payable` | Utang | Kredit | Ya |
@@ -202,8 +204,8 @@ Dikonfigurasi di [`template_id.py`](odoo/addons/l10n_id/models/template_id.py):
 | `31510020` | Ongoing Profit & Loss | Laba Rugi Tahun Berjalan | `equity` | Ekuitas | Kredit | Tidak |
 | `39000000` | Historical Balance | Historical Balance | `equity` | Ekuitas | Kredit | Ya |
 | `41000010` | Sales | Penjualan | `income` | Penghasilan | Kredit | Tidak |
-| `42000060` | Sales Refund | Retur Penjualan | `income` | Penghasilan | Kredit | Tidak |
-| `42000070` | Sales Discount | Discount Penjualan | `income` | Penghasilan | Kredit | Tidak |
+| `42000060` | Sales Refund | Retur Penjualan | `income` | Penghasilan | Debit* | Tidak |
+| `42000070` | Sales Discount | Discount Penjualan | `income` | Penghasilan | Debit* | Tidak |
 | `42500010` | Change in Inventory | Perubahan Persediaan | `expense` | Pengeluaran | Debit | Tidak |
 | `51000010` | Cost of Goods Sold | Harga Pokok Penjualan | `expense_direct_cost` | Biaya Pendapatan | Debit | Tidak |
 | `51000020` | Purchases - Raw Materials | Pembelian Bahan Baku | `expense` | Pengeluaran | Debit | Tidak |
