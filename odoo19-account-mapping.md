@@ -1,12 +1,12 @@
 # Referensi Chart of Accounts (CoA) Odoo 19 — Indonesia
 
-Referensi tipe akun (`account_type`) dan kelompok internal (`internal_group`) pada Chart of Accounts Odoo 19: padanan Bahasa Inggris ⇄ Indonesia, id teknis & external id, default value, konvensi posisi debit/kredit untuk opening balance, serta daftar 114 akun default yang di-preload untuk lokalisasi Indonesia (`l10n_id`).
+Referensi tipe akun (`account_type`) dan kelompok internal (`internal_group`) pada Chart of Accounts Odoo 19: padanan Bahasa Inggris ⇄ Indonesia, id teknis & external id, default value, konvensi posisi debit/kredit untuk opening balance, daftar 114 akun default yang di-preload untuk lokalisasi Indonesia (`l10n_id`), serta audit akun mana yang aman/tidak aman dihapus berdasarkan pemakaiannya di konfigurasi default Odoo.
 
 Sumber:
 - Definisi field & logika default: `odoo/addons/account/models/account_account.py`
 - id, External ID & label Indonesia: diverifikasi langsung dari tabel `ir_model_fields_selection` (kolom `name->>'id_ID'`) pada database `fresh` setelah bahasa Indonesia (`id_ID`) diinstall — hasilnya identik dengan file terjemahan statis `odoo/addons/account/i18n/id.po`. Data ini bawaan setiap instalasi Odoo 19 — bukan spesifik satu database tertentu.
 
-**Daftar isi:** [Model/Tabel Penyimpanan](#model--tabel-penyimpanan) · [Default Value](#default-value) · [Tabel `account_type`](#field-account_type-tipe-akun--19-opsi) · [Tabel `internal_group`](#field-internal_group-kelompok-internal--6-opsi) · [Opening Balance: Debit/Kredit](#opening-balance--posisi-debit-atau-kredit) · [Akun Default Preload (l10n_id)](#akun-akun-default-preload-template-coa-indonesia--modul-l10n_id) · [Catatan](#catatan)
+**Daftar isi:** [Model/Tabel Penyimpanan](#model--tabel-penyimpanan) · [Default Value](#default-value) · [Tabel `account_type`](#field-account_type-tipe-akun--19-opsi) · [Tabel `internal_group`](#field-internal_group-kelompok-internal--6-opsi) · [Opening Balance: Debit/Kredit](#opening-balance--posisi-debit-atau-kredit) · [Akun Default Preload (l10n_id)](#akun-akun-default-preload-template-coa-indonesia--modul-l10n_id) · [Akun Dipakai di Konfigurasi Default](#akun-yang-dipakai-di-konfigurasi-default-company--journal--kategori-produk--stok) · [Akun Dipakai di Template Pajak](#akun-yang-dipakai-di-template-pajak-accounttax-idcsv-accounttaxgroup-idcsv) · [Daftar Lengkap 114 Akun (+ Aman Dihapus?)](#daftar-lengkap-114-akun-preload) · [Catatan](#catatan)
 
 ## Model / Tabel Penyimpanan
 
@@ -118,143 +118,172 @@ Saat modul **"Indonesian - Accounting"** (`l10n_id`) diinstal / fiscal localizat
 - Kolom "Nama (Indonesia)" berasal dari kolom `name@id` di CSV tersebut; tanda **—** berarti tidak ada override Indonesia (nama Inggris tetap dipakai di UI meski locale `id_ID` aktif).
 - Beberapa akun dengan kode/nama yang sama (mis. "Office Building", "Vehicle") muncul dua kali dengan `account_type` berbeda: sekali sebagai Fixed Assets (`asset_fixed`), sekali lagi sebagai akun akumulasi penyusutan (`expense_depreciation`).
 
-### Akun properti default (dipakai otomatis oleh sistem)
+### Akun yang Dipakai di Konfigurasi Default (Company / Journal / Kategori Produk / Stok)
 
-Dikonfigurasi di [`template_id.py`](odoo/addons/l10n_id/models/template_id.py):
+Dikonfigurasi otomatis via `res.company`, `account.journal`, dan `account.account` (field `account_stock_expense_id`/`account_stock_variation_id`) di [`template_id.py`](odoo/addons/l10n_id/models/template_id.py) — dipasang saat modul `l10n_id`/CoA Indonesia diinstal, jadi kalau akun-akun ini dihapus, field konfigurasi terkait akan kosong/rusak sampai diisi ulang manual:
 
-| Fungsi | Kode Akun | Nama Inggris | Nama Indonesia |
+| Fungsi / Field Teknis | Model | Kode Akun | Nama Inggris |
 |---|---|---|---|
-| Default Account Receivable (`property_account_receivable_id`) | `11210010` | Account Receivable | Piutang Usaha |
-| Default Account Payable (`property_account_payable_id`) | `21100010` | Account Payable | Hutang Usaha |
-| Stock Valuation Account (`property_stock_valuation_account_id`) | `11300180` | Inventory | Persediaan Lainnya |
-| POS Receivable (`account_default_pos_receivable_account_id`) | `11210011` | Account Receivable (PoS) | Piutang Usaha (PoS) |
-| Cash Difference Income (`default_cash_difference_income_account_id`) | `99900002` | Cash Difference Gain | — |
-| Cash Difference Expense (`default_cash_difference_expense_account_id`) | `99900001` | Cash Difference Loss | — |
-| Currency Exchange Income (`income_currency_exchange_account_id`) | `81100030` | Foreign Exchange Gain | Keuntungan Selisih Kurs |
+| Default Account Receivable (`property_account_receivable_id`) | account.chart.template | `11210010` | Account Receivable |
+| Default Account Payable (`property_account_payable_id`) | account.chart.template | `21100010` | Account Payable |
+| Stock Valuation Account (`property_stock_valuation_account_id` / `account_stock_valuation_id`) | account.chart.template / res.company | `11300180` | Inventory |
+| POS Receivable (`account_default_pos_receivable_account_id`) | res.company | `11210011` | Account Receivable (PoS) |
+| Cash Difference Income (`default_cash_difference_income_account_id`) | res.company | `99900002` | Cash Difference Gain |
+| Cash Difference Expense (`default_cash_difference_expense_account_id`) | res.company | `99900001` | Cash Difference Loss |
+| Currency Exchange Income (`income_currency_exchange_account_id`) | res.company | `81100030` | Foreign Exchange Gain |
+| Currency Exchange Expense (`expense_currency_exchange_account_id`) | res.company | `91100020` | Foreign Exchange Loss |
+| Early Payment Discount Loss (`account_journal_early_pay_discount_loss_account_id`) | res.company | `99900003` | Cash Discount Loss |
+| Early Payment Discount Gain (`account_journal_early_pay_discount_gain_account_id`) | res.company | `99900004` | Cash Discount Gain |
+| Default Income Kategori Produk (`income_account_id`) | res.company | `41000010` | Sales |
+| Default Expense Kategori Produk (`expense_account_id`) | res.company | `51000010` | Cost of Goods Sold |
+| Deferred Expense Account (`deferred_expense_account_id`) | res.company | `11210040` | Prepaid Expense |
+| Deferred Revenue Account (`deferred_revenue_account_id`) | res.company | `28110030` | Deferred Revenue |
+| Stock Input/COGS Account (`account_stock_expense_id`, field pada akun `11300180`) | account.account | `51000020` | Purchases - Raw Materials |
+| Stock Variation Account (`account_stock_variation_id`, field pada akun `11300180`) | account.account | `42500010` | Change in Inventory |
+| Default Akun Jurnal Bank (`default_account_id`, journal `bank`) | account.journal | `11120001` | Bank |
+| Default Akun Jurnal Cash (`default_account_id`, journal `cash`) | account.journal | `11110001` | Cash |
+
+### Akun yang Dipakai di Template Pajak (`account.tax-id.csv`, `account.tax.group-id.csv`)
+
+| Kode Akun | Nama | Dipakai Sebagai | Dipakai Oleh |
+|---|---|---|---|
+| `21221010` | VAT Sales | Akun pajak keluaran (`repartition_line_ids/account_id`, tipe `tax`, invoice & refund) | **Semua** 11 tax template `sale`: `tax_ST0`, `tax_ST1`, `tax_ST2`, `tax_ST3`, `tax_ST4`, `tax_ST5`, `tax_ST6`, `tax_ST7`, `tax_luxury_sales`, `tax_luxury_sales_pemungut_ppn` |
+| `11210030` | VAT Purchase | Akun pajak masukan (`repartition_line_ids/account_id`, tipe `tax`, invoice & refund) | **Semua** 8 tax template `purchase`: `tax_PT0`, `tax_PT1`, `tax_PT2`, `tax_PT3`, `tax_PT4`, `tax_PT5`, `tax_PT6`, `tax_PT7` |
+| `21100011` | VAT Payable | `tax_payable_account_id` pada `account.tax.group` | `default_tax_group`, `l10n_id_tax_group_luxury_goods`, `l10n_id_tax_group_non_luxury_goods`, `l10n_id_tax_group_0`, `l10n_id_tax_group_exempt` |
+| `11210012` | VAT Receivable | `tax_receivable_account_id` pada `account.tax.group` | Grup pajak yang sama seperti di atas |
+| `21100012` | STLG Payable | `tax_payable_account_id` pada `account.tax.group` | `l10n_id_tax_group_stlg` |
+| `11210013` | STLG Receivable | `tax_receivable_account_id` pada `account.tax.group` | `l10n_id_tax_group_stlg` |
+
+> Sudah dicek: **tidak ada modul lain** (POS, Stock, Sale, Purchase, `l10n_id_efaktur_coretax`, `l10n_id_pos`, dll.) yang hardcode referensi ke kode akun `l10n_id` manapun — `grep -rEo "l10n_id_[0-9]{5,8}"` di seluruh `odoo/addons` di luar folder `l10n_id/` tidak menghasilkan match. Jadi daftar di atas (24 kode akun) adalah **seluruh** titik ketergantungan konfigurasi default.
+>
+> Kasus khusus: `999999` (`account_type=equity_unaffected`) tidak dirujuk lewat kode tertentu di manapun, tapi core Odoo **mewajibkan minimal satu** akun dengan tipe ini per company (dipakai `get_unaffected_earnings_account()` untuk baris "Automatic Balancing Line", lihat bagian [Opening Balance](#kalau-total-debit--credit-saat-import-auto-balancing-ke-akun-equity_unaffected) di atas). Kalau `999999` dihapus, Odoo **otomatis membuat akun baru** bertipe sama (kode mendekati `999999`, nama "Profit or Loss Appropriation") begitu dibutuhkan — jadi secara teknis "self-healing", tapi hasil auto-generate ini tidak akan mengikuti penomoran/penamaan CoA Indonesia yang konsisten.
 
 ### Daftar lengkap 114 akun preload
 
-*Kolom "Posisi Normal Opening Balance" berikut mengikuti konvensi akuntansi standar per `account_type` (lihat tabel [Posisi normal per tipe akun](#posisi-normal-per-tipe-akun-konvensi-akuntansi-standar) di atas), **kecuali** akun bertanda `*` yang merupakan akun kontra — lihat catatan pengecualian di atas.*
+*Kolom "Posisi Normal Opening Balance" mengikuti konvensi akuntansi standar per `account_type` (lihat tabel [Posisi normal per tipe akun](#posisi-normal-per-tipe-akun-konvensi-akuntansi-standar) di atas), **kecuali** akun bertanda `*` yang merupakan akun kontra — lihat catatan pengecualian di atas.*
 
-| Kode | Nama (Inggris) | Nama (Indonesia) | Tipe Akun (`account_type`) | Label Tipe (ID) | Posisi Normal Opening Balance | Reconcile |
-|---|---|---|---|---|---|---|
-| `11110001` | Cash | — | `asset_cash` | Bank dan Tunai | Debit | Tidak |
-| `11110010` | Petty Cash | Kas Kecil | `asset_cash` | Bank dan Tunai | Debit | Tidak |
-| `11120001` | Bank | — | `asset_cash` | Bank dan Tunai | Debit | Tidak |
-| `11210010` | Account Receivable | Piutang Usaha | `asset_receivable` | Piutang | Debit | Ya |
-| `11210011` | Account Receivable (PoS) | Piutang Usaha (PoS) | `asset_receivable` | Piutang | Debit | Ya |
-| `11210012` | VAT Receivable | — | `asset_receivable` | Piutang | Debit | Ya |
-| `11210013` | STLG Receivable | — | `asset_receivable` | Piutang | Debit | Ya |
-| `11210014` | PPh 28A Prepaid | — | `asset_receivable` | Piutang | Debit | Ya |
-| `11210030` | VAT Purchase | — | `asset_current` | Aktiva Lancar | Debit | Tidak |
-| `11210040` | Prepaid Expense | — | `asset_current` | Aktiva Lancar | Debit | Tidak |
-| `11300180` | Inventory | Persediaan Lainnya | `asset_current` | Aktiva Lancar | Debit | Tidak |
-| `11410010` | Building Rent | Sewa Bangunan | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11410020` | Prepaid Insurance | Asuransi Dibayar Dimuka | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11410030` | Prepaid Advertisement-Free | Beban Iklan Dibayar Dimuka | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11510010` | Prepaid Tax PPh 21 | — | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11510020` | Prepaid Tax Pph 22 | Pajak Dibayar Dimuka PPH 22 | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11510030` | Prepaid Tax Pph 23 | Pajak Dibayar Dimuka PPH 23 | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11510040` | Prepaid Tax Pph 25 | Pajak Dibayar Dimuka PPH 25 | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `11800000` | Down Payment | Uang Muka Pembelian | `asset_prepayments` | Prabayar | Debit | Tidak |
-| `12210010` | Office Building | Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12210020` | Vehicle | Kendaraan | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12210030` | Office Supplies | Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak |
-| `12281010` | Accumulation Building Depreciation | Akumulasi Penyusutan Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
-| `12281020` | Accumulation Vehicle Depreciation | Akumulasi Penyusutan Kendaraan | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
-| `12281030` | Accumulation Office Supplies Depreciation | Akumulasi Penyusutan Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak |
-| `21100010` | Account Payable | Hutang Usaha | `liability_payable` | Utang | Kredit | Ya |
-| `21100011` | VAT Payable | — | `liability_payable` | Utang | Kredit | Ya |
-| `21100012` | STLG Payable | — | `liability_payable` | Utang | Kredit | Ya |
-| `21100013` | Employee Liabilities | Piutang Karyawan | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21100014` | Tax Payable PPh 29 | — | `liability_payable` | Utang | Kredit | Ya |
-| `21100020` | Shareholder Deposit | Hutang Pemegang Saham | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `21100030` | Third-Party Deposit | Hutang Pihak Ketiga | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `21100040` | Salary Deposit | Hutang Gaji | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `21210010` | Tax Payable PPh 21 | Hutang Pajak PPh 21 | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21210020` | Tax Payable PPh 22 | Hutang Pajak PPh 22 | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21210030` | Tax Payable PPh 23 | Hutang Pajak PPh 23 | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21210040` | Tax Payable PPh 25 | Hutang Pajak PPh 25 | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21210050` | Tax Payable 4(2) | Hutang Pajak Pasal 4 (2) | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21210060` | Tax Payable PPh 26 | Hutang Pajak PPh 26 | `liability_current` | Pasiva Terkini | Kredit | Ya |
-| `21221010` | VAT Sales | PPN Pembelian | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `22110010` | Bank Loan | Hutang Bank | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `22110020` | Leasing Deposit | Hutang Leasing | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110010` | Accrued Payable Electricity | BYMHD Listrik | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110020` | Accrued Payable Jamsostek | BYMHD Jamsostek | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110030` | Accrued Payable Water | BYMHD Air | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110040` | Accrued Payable Telp & Internet | BYMHD Telepon | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110050` | Accrued Payable Security Management | BYMHD Jasa Pengelola Keamanan | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110060` | Accrued Payable Bank | BYMHD Bank | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110070` | Accrued Payable PBB | BYMHD PBB | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110080` | Accrued Payable Business License | BYMHD Izin Usaha | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110090` | Accrued Payable Insurance | BYMHD Asuransi | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110100` | Accrued Payable Education | BYMHD Pendidikan dan Latihan | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `25110110` | Accrued Payable Health Insurance/BPJS | BYMHD Jaminan Kesehatan/BPJS | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `28110010` | Advance Sales | Uang Muka Penjualan | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `28110020` | Customer Deposit | Deposit Customer | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `28110030` | Deferred Revenue | — | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `29000000` | Interim Stock | Stok Interim | `liability_current` | Pasiva Terkini | Kredit | Tidak |
-| `31100010` | Authorized Capital | Modal Dasar | `equity` | Ekuitas | Kredit | Tidak |
-| `31100020` | Paid Capital | Modal Yang Disetor | `equity` | Ekuitas | Kredit | Tidak |
-| `31100030` | Unpaid Capital | Modal Yang Belum Disetor | `equity` | Ekuitas | Kredit | Tidak |
-| `31100040` | Prive (Personal Retrieval) | Prive (Pengambilan Pribadi) | `equity` | Ekuitas | Kredit | Tidak |
-| `31210010` | Capital Reserves | Cadangan Modal | `equity` | Ekuitas | Kredit | Tidak |
-| `31510010` | Past Profit & Loss | Laba Rugi Tahun Lalu | `equity` | Ekuitas | Kredit | Tidak |
-| `31510020` | Ongoing Profit & Loss | Laba Rugi Tahun Berjalan | `equity` | Ekuitas | Kredit | Tidak |
-| `39000000` | Historical Balance | Historical Balance | `equity` | Ekuitas | Kredit | Ya |
-| `41000010` | Sales | Penjualan | `income` | Penghasilan | Kredit | Tidak |
-| `42000060` | Sales Refund | Retur Penjualan | `income` | Penghasilan | Debit* | Tidak |
-| `42000070` | Sales Discount | Discount Penjualan | `income` | Penghasilan | Debit* | Tidak |
-| `42500010` | Change in Inventory | Perubahan Persediaan | `expense` | Pengeluaran | Debit | Tidak |
-| `51000010` | Cost of Goods Sold | Harga Pokok Penjualan | `expense_direct_cost` | Biaya Pendapatan | Debit | Tidak |
-| `51000020` | Purchases - Raw Materials | Pembelian Bahan Baku | `expense` | Pengeluaran | Debit | Tidak |
-| `61100010` | Employee Salary | Gaji Karyawan | `expense` | Pengeluaran | Debit | Tidak |
-| `61100020` | Employee Bonus / Benefits | Tunjangan/ Bonus Karyawan | `expense` | Pengeluaran | Debit | Tidak |
-| `61100030` | Employee Overtime Pay | Lembur Karyawan | `expense` | Pengeluaran | Debit | Tidak |
-| `61100100` | Pph 21 Benefit | Tunjangan PPH Pasal 21 | `expense` | Pengeluaran | Debit | Tidak |
-| `61100110` | PPh 22 Final | — | `expense` | Pengeluaran | Debit | Tidak |
-| `61100120` | PPh 4(2) Final | — | `expense` | Pengeluaran | Debit | Tidak |
-| `63110060` | Phone | Telepon | `expense` | Pengeluaran | Debit | Tidak |
-| `63110080` | Electricity | Listrik | `expense` | Pengeluaran | Debit | Tidak |
-| `63110100` | Research & Development | Research & Development | `expense` | Pengeluaran | Debit | Tidak |
-| `63110120` | Office Equipment | Perlengkapan Kantor | `expense` | Pengeluaran | Debit | Tidak |
-| `64110020` | Post Necessities | Keperluan Pos | `expense` | Pengeluaran | Debit | Tidak |
-| `63110140` | Other Necessities | Keperluan Lain-lain | `expense` | Pengeluaran | Debit | Tidak |
-| `65110010` | Licensing Fees | Biaya Perizinan | `expense` | Pengeluaran | Debit | Tidak |
-| `65110020` | Bank Administration Fees | Biaya Administrasi Bank | `expense` | Pengeluaran | Debit | Tidak |
-| `65110030` | Consultant Fees | Biaya Konsultan | `expense` | Pengeluaran | Debit | Tidak |
-| `65110040` | Rental Costs | Biaya Sewa | `expense` | Pengeluaran | Debit | Tidak |
-| `65110050` | Insurance Costs | — | `expense` | Pengeluaran | Debit | Tidak |
-| `65110060` | Building Maintenance Costs | Biaya Pemeliharaan & Perawatan Gedung | `expense` | Pengeluaran | Debit | Tidak |
-| `65110070` | Income Tax Expenses (CIT) | Pajak | `expense` | Pengeluaran | Debit | Tidak |
-| `65110080` | Asset Maintenance Costs | Biaya Pemeliharaan & Perawatan Aset | `expense` | Pengeluaran | Debit | Tidak |
-| `65110090` | Shipping Costs | Biaya Pengiriman Dokumen/Barang | `expense` | Pengeluaran | Debit | Tidak |
-| `66110010` | Vehicle Fuel | BBM kendaraan | `expense` | Pengeluaran | Debit | Tidak |
-| `66110020` | Vehicle Service | Service kendaraan | `expense` | Pengeluaran | Debit | Tidak |
-| `66110030` | Vehicle Parking & Toll Fee | Parkir & tol kendaraan | `expense` | Pengeluaran | Debit | Tidak |
-| `66110040` | Vehicle Taxes | Pajak Kendaraan | `expense` | Pengeluaran | Debit | Tidak |
-| `66110050` | Vehicle Insurance | Asuransi Kendaraan | `expense` | Pengeluaran | Debit | Tidak |
-| `67100010` | Office Building | Bangunan Kantor | `expense_depreciation` | Penyusutan | Debit | Tidak |
-| `67100020` | Vehicle | Kendaraan | `expense_depreciation` | Penyusutan | Debit | Tidak |
-| `67100030` | Office Supplies | Peralatan Kantor | `expense_depreciation` | Penyusutan | Debit | Tidak |
-| `69000000` | Other Expenses | Biaya Lain-lain | `expense` | Pengeluaran | Debit | Tidak |
-| `81100010` | Interest Income | Pendapatan Bunga | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `81100020` | Deposit Income | Pendapatan Deposit | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `81100030` | Foreign Exchange Gain | Keuntungan Selisih Kurs | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `81100040` | Other Income | Pendapatan lainnya | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `81100050` | Gain on Sale of Fixed Assets | Keuntungan Atas Penjualan Aktiva Tetap | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `91100010` | Interest Expense | Beban Bunga | `expense` | Pengeluaran | Debit | Tidak |
-| `91100020` | Foreign Exchange Loss | Kerugian Selisih Kurs | `expense` | Pengeluaran | Debit | Tidak |
-| `91100030` | Loss on Sale of Fixed Assets | Kerugian Atas Penjualan Aktiva Tetap | `expense` | Pengeluaran | Debit | Tidak |
-| `99900001` | Cash Difference Loss | — | `expense` | Pengeluaran | Debit | Tidak |
-| `99900002` | Cash Difference Gain | — | `income` | Penghasilan | Kredit | Tidak |
-| `99900003` | Cash Discount Loss | — | `expense` | Pengeluaran | Debit | Tidak |
-| `99900004` | Cash Discount Gain | — | `income_other` | Penghasilan Lainnya | Kredit | Tidak |
-| `999999` | Undistributed Profits/Losses | — | `equity_unaffected` | Penghasilan Tahun Terkini | Kredit | Tidak |
+*Kolom **"Aman Dihapus?"** hasil audit terhadap source code (`template_id.py` + CSV tax/tax-group di `l10n_id`, dicek-silang ke seluruh addon lain) — lihat dua tabel referensi di atas untuk detail tiap field. **"Tidak"** = akun dirujuk langsung oleh field konfigurasi default (company/journal/kategori produk/stok) atau oleh **seluruh** template pajak jual/beli; menghapusnya akan mengosongkan/merusak field tsb. **"Ya"** = tidak dirujuk field/tax template manapun secara hardcode — aman dihapus dari sisi konfigurasi dasar Odoo, **tapi tetap cek dulu** apakah akun sudah punya jurnal terpos (`account_move_line`) di database produksi; kalau sudah, arsipkan (`active=False`) alih-alih hapus permanen.*
+
+| Kode | Nama (Inggris) | Nama (Indonesia) | Tipe Akun (`account_type`) | Label Tipe (ID) | Posisi Normal Opening Balance | Reconcile | Aman Dihapus? |
+|---|---|---|---|---|---|---|---|
+| `11110001` | Cash | — | `asset_cash` | Bank dan Tunai | Debit | Tidak | **Tidak** — default jurnal Cash |
+| `11110010` | Petty Cash | Kas Kecil | `asset_cash` | Bank dan Tunai | Debit | Tidak | Ya |
+| `11120001` | Bank | — | `asset_cash` | Bank dan Tunai | Debit | Tidak | **Tidak** — default jurnal Bank |
+| `11210010` | Account Receivable | Piutang Usaha | `asset_receivable` | Piutang | Debit | Ya | **Tidak** — `property_account_receivable_id` |
+| `11210011` | Account Receivable (PoS) | Piutang Usaha (PoS) | `asset_receivable` | Piutang | Debit | Ya | **Tidak** — `account_default_pos_receivable_account_id` |
+| `11210012` | VAT Receivable | — | `asset_receivable` | Piutang | Debit | Ya | **Tidak** — `tax_receivable_account_id` (grup pajak) |
+| `11210013` | STLG Receivable | — | `asset_receivable` | Piutang | Debit | Ya | **Tidak** — `tax_receivable_account_id` (grup STLG) |
+| `11210014` | PPh 28A Prepaid | — | `asset_receivable` | Piutang | Debit | Ya | Ya |
+| `11210030` | VAT Purchase | — | `asset_current` | Aktiva Lancar | Debit | Tidak | **Tidak** — akun pajak masukan (semua tax `purchase`) |
+| `11210040` | Prepaid Expense | — | `asset_current` | Aktiva Lancar | Debit | Tidak | **Tidak** — `deferred_expense_account_id` |
+| `11300180` | Inventory | Persediaan Lainnya | `asset_current` | Aktiva Lancar | Debit | Tidak | **Tidak** — `property_stock_valuation_account_id` |
+| `11410010` | Building Rent | Sewa Bangunan | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11410020` | Prepaid Insurance | Asuransi Dibayar Dimuka | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11410030` | Prepaid Advertisement-Free | Beban Iklan Dibayar Dimuka | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11510010` | Prepaid Tax PPh 21 | — | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11510020` | Prepaid Tax Pph 22 | Pajak Dibayar Dimuka PPH 22 | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11510030` | Prepaid Tax Pph 23 | Pajak Dibayar Dimuka PPH 23 | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11510040` | Prepaid Tax Pph 25 | Pajak Dibayar Dimuka PPH 25 | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `11800000` | Down Payment | Uang Muka Pembelian | `asset_prepayments` | Prabayar | Debit | Tidak | Ya |
+| `12210010` | Office Building | Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak | Ya |
+| `12210020` | Vehicle | Kendaraan | `asset_fixed` | Aktiva Tetap | Debit | Tidak | Ya |
+| `12210030` | Office Supplies | Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Debit | Tidak | Ya |
+| `12281010` | Accumulation Building Depreciation | Akumulasi Penyusutan Bangunan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak | Ya |
+| `12281020` | Accumulation Vehicle Depreciation | Akumulasi Penyusutan Kendaraan | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak | Ya |
+| `12281030` | Accumulation Office Supplies Depreciation | Akumulasi Penyusutan Peralatan Kantor | `asset_fixed` | Aktiva Tetap | Kredit* | Tidak | Ya |
+| `21100010` | Account Payable | Hutang Usaha | `liability_payable` | Utang | Kredit | Ya | **Tidak** — `property_account_payable_id` |
+| `21100011` | VAT Payable | — | `liability_payable` | Utang | Kredit | Ya | **Tidak** — `tax_payable_account_id` (grup pajak) |
+| `21100012` | STLG Payable | — | `liability_payable` | Utang | Kredit | Ya | **Tidak** — `tax_payable_account_id` (grup STLG) |
+| `21100013` | Employee Liabilities | Piutang Karyawan | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21100014` | Tax Payable PPh 29 | — | `liability_payable` | Utang | Kredit | Ya | Ya |
+| `21100020` | Shareholder Deposit | Hutang Pemegang Saham | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `21100030` | Third-Party Deposit | Hutang Pihak Ketiga | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `21100040` | Salary Deposit | Hutang Gaji | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `21210010` | Tax Payable PPh 21 | Hutang Pajak PPh 21 | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21210020` | Tax Payable PPh 22 | Hutang Pajak PPh 22 | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21210030` | Tax Payable PPh 23 | Hutang Pajak PPh 23 | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21210040` | Tax Payable PPh 25 | Hutang Pajak PPh 25 | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21210050` | Tax Payable 4(2) | Hutang Pajak Pasal 4 (2) | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21210060` | Tax Payable PPh 26 | Hutang Pajak PPh 26 | `liability_current` | Pasiva Terkini | Kredit | Ya | Ya |
+| `21221010` | VAT Sales | PPN Pembelian | `liability_current` | Pasiva Terkini | Kredit | Tidak | **Tidak** — akun pajak keluaran (semua tax `sale`) |
+| `22110010` | Bank Loan | Hutang Bank | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `22110020` | Leasing Deposit | Hutang Leasing | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110010` | Accrued Payable Electricity | BYMHD Listrik | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110020` | Accrued Payable Jamsostek | BYMHD Jamsostek | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110030` | Accrued Payable Water | BYMHD Air | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110040` | Accrued Payable Telp & Internet | BYMHD Telepon | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110050` | Accrued Payable Security Management | BYMHD Jasa Pengelola Keamanan | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110060` | Accrued Payable Bank | BYMHD Bank | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110070` | Accrued Payable PBB | BYMHD PBB | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110080` | Accrued Payable Business License | BYMHD Izin Usaha | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110090` | Accrued Payable Insurance | BYMHD Asuransi | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110100` | Accrued Payable Education | BYMHD Pendidikan dan Latihan | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `25110110` | Accrued Payable Health Insurance/BPJS | BYMHD Jaminan Kesehatan/BPJS | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `28110010` | Advance Sales | Uang Muka Penjualan | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `28110020` | Customer Deposit | Deposit Customer | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `28110030` | Deferred Revenue | — | `liability_current` | Pasiva Terkini | Kredit | Tidak | **Tidak** — `deferred_revenue_account_id` |
+| `29000000` | Interim Stock | Stok Interim | `liability_current` | Pasiva Terkini | Kredit | Tidak | Ya |
+| `31100010` | Authorized Capital | Modal Dasar | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31100020` | Paid Capital | Modal Yang Disetor | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31100030` | Unpaid Capital | Modal Yang Belum Disetor | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31100040` | Prive (Personal Retrieval) | Prive (Pengambilan Pribadi) | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31210010` | Capital Reserves | Cadangan Modal | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31510010` | Past Profit & Loss | Laba Rugi Tahun Lalu | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `31510020` | Ongoing Profit & Loss | Laba Rugi Tahun Berjalan | `equity` | Ekuitas | Kredit | Tidak | Ya |
+| `39000000` | Historical Balance | Historical Balance | `equity` | Ekuitas | Kredit | Ya | Ya |
+| `41000010` | Sales | Penjualan | `income` | Penghasilan | Kredit | Tidak | **Tidak** — `income_account_id` (default kategori produk) |
+| `42000060` | Sales Refund | Retur Penjualan | `income` | Penghasilan | Debit* | Tidak | Ya |
+| `42000070` | Sales Discount | Discount Penjualan | `income` | Penghasilan | Debit* | Tidak | Ya |
+| `42500010` | Change in Inventory | Perubahan Persediaan | `expense` | Pengeluaran | Debit | Tidak | **Tidak** — `account_stock_variation_id` (linked akun stok `11300180`) |
+| `51000010` | Cost of Goods Sold | Harga Pokok Penjualan | `expense_direct_cost` | Biaya Pendapatan | Debit | Tidak | **Tidak** — `expense_account_id` (default kategori produk) |
+| `51000020` | Purchases - Raw Materials | Pembelian Bahan Baku | `expense` | Pengeluaran | Debit | Tidak | **Tidak** — `account_stock_expense_id` (linked akun stok `11300180`) |
+| `61100010` | Employee Salary | Gaji Karyawan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `61100020` | Employee Bonus / Benefits | Tunjangan/ Bonus Karyawan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `61100030` | Employee Overtime Pay | Lembur Karyawan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `61100100` | Pph 21 Benefit | Tunjangan PPH Pasal 21 | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `61100110` | PPh 22 Final | — | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `61100120` | PPh 4(2) Final | — | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `63110060` | Phone | Telepon | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `63110080` | Electricity | Listrik | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `63110100` | Research & Development | Research & Development | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `63110120` | Office Equipment | Perlengkapan Kantor | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `64110020` | Post Necessities | Keperluan Pos | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `63110140` | Other Necessities | Keperluan Lain-lain | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110010` | Licensing Fees | Biaya Perizinan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110020` | Bank Administration Fees | Biaya Administrasi Bank | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110030` | Consultant Fees | Biaya Konsultan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110040` | Rental Costs | Biaya Sewa | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110050` | Insurance Costs | — | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110060` | Building Maintenance Costs | Biaya Pemeliharaan & Perawatan Gedung | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110070` | Income Tax Expenses (CIT) | Pajak | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110080` | Asset Maintenance Costs | Biaya Pemeliharaan & Perawatan Aset | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `65110090` | Shipping Costs | Biaya Pengiriman Dokumen/Barang | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `66110010` | Vehicle Fuel | BBM kendaraan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `66110020` | Vehicle Service | Service kendaraan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `66110030` | Vehicle Parking & Toll Fee | Parkir & tol kendaraan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `66110040` | Vehicle Taxes | Pajak Kendaraan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `66110050` | Vehicle Insurance | Asuransi Kendaraan | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `67100010` | Office Building | Bangunan Kantor | `expense_depreciation` | Penyusutan | Debit | Tidak | Ya |
+| `67100020` | Vehicle | Kendaraan | `expense_depreciation` | Penyusutan | Debit | Tidak | Ya |
+| `67100030` | Office Supplies | Peralatan Kantor | `expense_depreciation` | Penyusutan | Debit | Tidak | Ya |
+| `69000000` | Other Expenses | Biaya Lain-lain | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `81100010` | Interest Income | Pendapatan Bunga | `income_other` | Penghasilan Lainnya | Kredit | Tidak | Ya |
+| `81100020` | Deposit Income | Pendapatan Deposit | `income_other` | Penghasilan Lainnya | Kredit | Tidak | Ya |
+| `81100030` | Foreign Exchange Gain | Keuntungan Selisih Kurs | `income_other` | Penghasilan Lainnya | Kredit | Tidak | **Tidak** — `income_currency_exchange_account_id` |
+| `81100040` | Other Income | Pendapatan lainnya | `income_other` | Penghasilan Lainnya | Kredit | Tidak | Ya |
+| `81100050` | Gain on Sale of Fixed Assets | Keuntungan Atas Penjualan Aktiva Tetap | `income_other` | Penghasilan Lainnya | Kredit | Tidak | Ya |
+| `91100010` | Interest Expense | Beban Bunga | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `91100020` | Foreign Exchange Loss | Kerugian Selisih Kurs | `expense` | Pengeluaran | Debit | Tidak | **Tidak** — `expense_currency_exchange_account_id` |
+| `91100030` | Loss on Sale of Fixed Assets | Kerugian Atas Penjualan Aktiva Tetap | `expense` | Pengeluaran | Debit | Tidak | Ya |
+| `99900001` | Cash Difference Loss | — | `expense` | Pengeluaran | Debit | Tidak | **Tidak** — `default_cash_difference_expense_account_id` |
+| `99900002` | Cash Difference Gain | — | `income` | Penghasilan | Kredit | Tidak | **Tidak** — `default_cash_difference_income_account_id` |
+| `99900003` | Cash Discount Loss | — | `expense` | Pengeluaran | Debit | Tidak | **Tidak** — `account_journal_early_pay_discount_loss_account_id` |
+| `99900004` | Cash Discount Gain | — | `income_other` | Penghasilan Lainnya | Kredit | Tidak | **Tidak** — `account_journal_early_pay_discount_gain_account_id` |
+| `999999` | Undistributed Profits/Losses | — | `equity_unaffected` | Penghasilan Tahun Terkini | Kredit | Tidak | **Tidak\*** — wajib ada ≥1 akun `equity_unaffected` (self-healing, lihat catatan di atas) |
 
 ## Catatan
 
+- **Ringkasan keamanan hapus akun**: dari 114 akun preload, **25 akun "Tidak" aman dihapus** (dirujuk langsung oleh `property_*`/field default `res.company`, default akun jurnal Bank/Cash, default kategori produk, field linked akun stok, atau oleh *seluruh* template pajak jual/beli — lihat dua tabel referensi di [bagian preload](#akun-akun-default-preload-template-coa-indonesia--modul-l10n_id) di atas) dan **89 akun "Ya" aman dihapus** dari sisi konfigurasi dasar Odoo (tidak dirujuk field/tax template manapun secara hardcode). Audit dilakukan dengan membaca langsung `template_id.py`, `account.tax-id.csv`, `account.tax.group-id.csv` di `l10n_id`, dan grep lintas seluruh `odoo/addons` untuk memastikan tidak ada modul lain yang hardcode kode akun ini.
 - Kode teknis `account_type` mengikuti pola `<internal_group>_<subtipe>`, contoh `asset_cash` = kelompok `asset` + subtipe `cash`.
 - External ID (`account.selection__...`) adalah kunci yang stabil untuk merujuk ke opsi ini lintas instalasi/environment (mis. via `ref()` di data XML modul lain yang melakukan `selection_add`). `id` numerik di kolom pertama tabel di atas bersifat instance-specific (auto-increment PostgreSQL, akan berbeda nilainya di tiap database) — jangan dijadikan referensi tetap.
 - Beberapa istilah (`Off-Balance Sheet`, `Off Balance`) belum diterjemahkan di `id.po` bawaan Odoo — istilah Inggris tetap dipakai sebagai istilah Indonesia di UI.
