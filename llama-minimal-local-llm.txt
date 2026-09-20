@@ -7,3 +7,9 @@ chmod +x llamafile-0.10.5
 di mac perlu allow execution di setting
 
 https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q8_0.gguf?download=true
+
+atau run ini, single file include model
+https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles
+
+catatan
+model 0.8B goblok
