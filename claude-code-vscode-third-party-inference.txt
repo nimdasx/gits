@@ -1,0 +1,24 @@
+vscode claude code thid party inference
+
+shift + command + p 
+
+preferences: open user setting (json)
+
+    "claudeCode.environmentVariables": [
+    {
+      "name": "ANTHROPIC_BASE_URL",
+      "value": "https://omniroute.vo.sof...."
+    },
+    {
+      "name": "ANTHROPIC_AUTH_TOKEN",
+      "value": "sk-..."
+    },
+    {
+      "name": "ANTHROPIC_MODEL",
+      "value": "claude"
+    },
+    {
+      "name": "CLAUDE_CODE_AUTO_MODE_SERVER",
+      "value": 0
+    }
+    ],
